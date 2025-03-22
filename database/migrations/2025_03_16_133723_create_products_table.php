@@ -10,9 +10,10 @@ class CreateProductsTable extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->string('name'); // Názov produktu
-            $table->integer('quantity'); // Množstvo
+            $table->string('name');
+            $table->integer('quantity');
             $table->unsignedBigInteger('list_category_id')->nullable();
+            $table->foreignId('shopping_list_id')->constrained()->onDelete('cascade');
             $table->foreign('list_category_id')->references('id')->on('list_categories')->onDelete('set null');
             $table->timestamps();
         });
