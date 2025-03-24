@@ -13,7 +13,7 @@ class ListCategorySeeder extends Seeder
      */
     public function run(): void
     {
-        $categories = ['Ovocie/Zelenina', 'Mäso', 'Nápoje', 'Pečivo', 'Nonfood'];
+        $categories = ['Fruits', 'Vegetables', 'Meats', 'Beverages', 'Baked goods'];
         foreach ($categories as $category) {
             ListCategory::create(['name' => $category]);
         }

@@ -1,11 +1,11 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Nákupný zoznam</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-    <div class="container mt-5">
+@extends('layouts.app')
+
+    @section('title', 'Domov')
+    
+    @section('content')
+
+    
+    
         <h1>Nákupný zoznam: {{ $shoppingList->name }}</h1>
 
         @if (session('success'))
@@ -16,7 +16,7 @@
         @endif
 
         <!-- Formulár -->
-        <form action="{{ route('products.store', $shoppingList->id) }}" method="POST" class="mb-4">
+        <form action="{{ route('shopping_lists.store', $shoppingList->id) }}" method="POST" class="mb-4">
             @csrf
             <div class="mb-3">
                 <label for="name" class="form-label">Názov produktu</label>
@@ -48,9 +48,5 @@
                 @endforeach
             </tbody>
         </table>
-    </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+    @endsection

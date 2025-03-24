@@ -7,6 +7,13 @@
     <title>Shopping list</title>
 </head>
 <body>
-    <a href="{{ route('products.index', 1) }}">Nákupný zoznam</a>
+    @extends('layouts.app')
+
+    @section('title', 'Domov')
+    
+    @section('content')
+
+    @endsection
+
 </body>
 </html>
