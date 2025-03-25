@@ -15,5 +15,6 @@ Route::post('/shopping-list/{shoppingListId}/products', [ShoppingListController:
 
 Route::get('/recipes', [RecipeController::class, 'index'])->name('recipes.index');
 Route::get('/recipes/{recipesId}', [RecipeController::class, 'show'])->name('recipes.show');
+Route::post('/recipes/store{recipesId}/items', [RecipeController::class, 'store'])->name('recipes.store');
 
 

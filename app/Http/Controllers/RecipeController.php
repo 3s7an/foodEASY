@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AiClassifier;
 use App\Models\Recipe;
+use Illuminate\Http\Request;
 
 class RecipeController extends Controller
 {
@@ -12,7 +14,13 @@ class RecipeController extends Controller
   }
 
   public function show($recipeId){
-    $shoppingList = Recipe::with('recipe_items')->findOrFail($recipeId);
-    return view('recipes.show', compact('shoppingList'));
+    $recipe = Recipe::with('recipe_items')->findOrFail($recipeId);
+    return view('recipes.show', compact('recipe'));
+  }
+
+  public function store(Request $request, $recipeId){
+    $product_name = $request->name;
+    $product_name = AiClassifier::translateProductName($product_name);
+    $data = AiClassifier::getNutrients($product_name);
   }
 }

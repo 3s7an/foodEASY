@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Models\AiClassifier;
 use App\Models\Product;
 use App\Models\ShoppingList;
 use App\Models\ListCategory;
@@ -25,8 +27,8 @@ class ShoppingListController extends Controller
         ]);
 
     
-        $productName = Product::translateProductName($request->name);
-        $categoryName = Product::getCategoryFromApi($productName);
+        $productName = AiClassifier::translateProductName($request->name);
+        $categoryName = AiClassifier::getCategoryFromApi($productName);
         $category = ListCategory::where('name', $categoryName)->first();
     
         if (!$category) {

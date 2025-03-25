@@ -45,7 +45,7 @@ class AiClassifier extends Model
         }
       }
     
-      public static function translateProductName($productName){
+    public static function translateProductName($productName){
         $client = new Client();
     
         $deepLUrl = 'https://api-free.deepl.com/v2/translate';
@@ -73,5 +73,66 @@ class AiClassifier extends Model
       }
     
     
-      }
+    }
+
+      public static function getNutrients($productName){
+        $client = new Client();
+        $apiKey = env('USDA_API_KEY');
+
+        $productName = AiClassifier::translateProductName($productName);
+
+
+        try {
+            $response = $client->get('https://api.nal.usda.gov/fdc/v1/foods/search', [
+                'query' => [
+                    'query' => $productName,
+                    'dataType' => 'Foundation,SR Legacy',
+                    'pageSize' => 1,
+                    'api_key' => $apiKey,
+                ],
+            ]);
+    
+            $data = json_decode($response->getBody(), true);
+
+
+            if (empty($data['foods'])) {
+                return null;
+            }
+
+            $food = $data['foods'][0];
+
+            dd($food);
+            $nutrients = $food['foodNutrients'];
+            $calories = 0;
+            dd($data['foods'][0]);
+
+
+            foreach ($nutrients as $nutrient) {
+                if ($nutrient['nutrientName'] === 'Energy') {
+                    if ($nutrient['unitName'] === 'KCAL') {
+                        $calories = $nutrient['value'];
+                        break;
+                    } elseif ($nutrient['unitName'] === 'kJ') {
+                       dd($nutrient);
+                        $calories = $nutrient['value'] * 0.239; // Prepočet kJ na kcal
+                        dd($calories);
+                        break;
+                    }
+                }
+            }
+       
+            return [
+                'description' => $food['description'],
+                'calories' => round($calories, 2),
+                'unit' => 'kcal/100g'
+            ];
+         
+    
+            if (empty($data['foods'])) {
+                return redirect()->back()->with('error', 'Produkt nenájdený');
+            }
+        } catch (\Exception $e) {
+          return redirect()->back()->with('error', 'Chyba: ' . $e->getMessage());
+        }
+    }
 }

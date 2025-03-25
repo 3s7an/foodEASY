@@ -4,9 +4,9 @@
 
 @section('content')
 
-  <h1></h1>
+  <h1>Recept : {{$recipe->namephp}}</h1>
     <!-- Formulár -->
-    <form action="{{ route('shopping_lists.store', $shoppingList->id) }}" method="POST" class="mb-4">
+    <form action="{{ route('recipes.store', $recipe->id) }}" method="POST" class="mb-4">
         @csrf
         <div class="mb-3">
             <label for="name" class="form-label">Názov položky</label>
