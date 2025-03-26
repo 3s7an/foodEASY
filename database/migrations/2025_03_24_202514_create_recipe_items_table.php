@@ -17,9 +17,9 @@ return new class extends Migration
                 $table->string('name');
                 $table->integer('quantity');
                 $table->integer('calories');
-                $table->unsignedBigInteger('list_category_id')->nullable();
+                $table->string('image', 255)->nullable();
                 $table->foreignId('recipe_id')->constrained()->onDelete('cascade');
-                $table->foreign('list_category_id')->references('id')->on('list_categories')->onDelete('set null');
+                $table->foreign('recipe_id')->references('id')->on('recipe')->onDelete('set null');
                 $table->timestamps();
             });
      

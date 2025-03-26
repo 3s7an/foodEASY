@@ -44,95 +44,83 @@ class AiClassifier extends Model
             return 'Unknown';
         }
       }
-    
+
     public static function translateProductName($productName){
         $client = new Client();
-    
         $deepLUrl = 'https://api-free.deepl.com/v2/translate';
         $deepLKey = env('DEEPL_API_KEY');
-    
+
+        \Log::info("Preparing DeepL request: URL=$deepLUrl, Key=$deepLKey, ProductName=$productName");
+
         try {
-          $translateResponse = $client->post($deepLUrl, [
-              'form_params' => [
-                  'auth_key' => $deepLKey,
-                  'text' => $productName,
-                  'source_lang' => 'SK',
-                  'target_lang' => 'EN',
-              ],
-          ]);
-    
-          $translateResult = json_decode($translateResponse->getBody(), true);
-          $translatedName = $translateResult['translations'][0]['text'] ?? $productName;
-          \Log::info("Translated '$productName' to '$translatedName'");
-    
-          return $translatedName;
-    
-      } catch (\Exception $e) {
-          \Log::error('DeepL translation error: ' . $e->getMessage());
-          $translatedName = $productName;
-      }
-    
-    
+            $params = [
+                'headers' => [
+                    'Authorization' => "DeepL-Auth-Key $deepLKey",
+                    'Content-Type' => 'application/x-www-form-urlencoded',
+                ],
+                'form_params' => [
+                    'text' => $productName,
+                    'source_lang' => 'SK',
+                    'target_lang' => 'EN',
+                ],
+                
+            ];
+            \Log::info("Request params: " . json_encode($params));
+
+            $translateResponse = $client->post($deepLUrl, $params);
+            $responseBody = $translateResponse->getBody()->getContents();
+            \Log::info("DeepL response: " . $responseBody);
+
+            $translateResult = json_decode($responseBody, true);
+            $translatedName = $translateResult['translations'][0]['text'] ?? $productName;
+            \Log::info("Translated '$productName' to '$translatedName'");
+
+            return $translatedName;
+
+        } catch (\Exception $e) {
+            \Log::error('DeepL translation error: ' . $e->getMessage());
+            return $productName;
+        }
     }
 
-      public static function getNutrients($productName){
+    public static function getNutrients($productName)
+    {
         $client = new Client();
-        $apiKey = env('USDA_API_KEY');
-
-        $productName = AiClassifier::translateProductName($productName);
-
-
+        $appId = env('NUTRITIONIX_APP_ID'); 
+        $apiKey = env('NUTRITIONIX_API_KEY'); 
+    
         try {
-            $response = $client->get('https://api.nal.usda.gov/fdc/v1/foods/search', [
-                'query' => [
-                    'query' => $productName,
-                    'dataType' => 'Foundation,SR Legacy',
-                    'pageSize' => 1,
-                    'api_key' => $apiKey,
+            $response = $client->request('POST', 'https://trackapi.nutritionix.com/v2/natural/nutrients', [
+                'headers' => [
+                    'x-app-id' => $appId,
+                    'x-app-key' => $apiKey,
+                    'Content-Type' => 'application/json',
+                ],
+                'json' => [
+                    'query' => "100g $productName",
                 ],
             ]);
     
             $data = json_decode($response->getBody(), true);
 
-
+            dd($data);
+    
             if (empty($data['foods'])) {
                 return null;
             }
-
+    
             $food = $data['foods'][0];
-
-            dd($food);
-            $nutrients = $food['foodNutrients'];
-            $calories = 0;
-            dd($data['foods'][0]);
-
-
-            foreach ($nutrients as $nutrient) {
-                if ($nutrient['nutrientName'] === 'Energy') {
-                    if ($nutrient['unitName'] === 'KCAL') {
-                        $calories = $nutrient['value'];
-                        break;
-                    } elseif ($nutrient['unitName'] === 'kJ') {
-                       dd($nutrient);
-                        $calories = $nutrient['value'] * 0.239; // Prepočet kJ na kcal
-                        dd($calories);
-                        break;
-                    }
-                }
-            }
-       
+            $image = $food['photo']['thumb'];
+            $calories = $food['nf_calories'] ?? 0; 
+    
             return [
-                'description' => $food['description'],
+                'description' => $food['food_name'], 
                 'calories' => round($calories, 2),
                 'unit' => 'kcal/100g'
             ];
-         
     
-            if (empty($data['foods'])) {
-                return redirect()->back()->with('error', 'Produkt nenájdený');
-            }
         } catch (\Exception $e) {
-          return redirect()->back()->with('error', 'Chyba: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Chyba: ' . $e->getMessage());
         }
     }
 }

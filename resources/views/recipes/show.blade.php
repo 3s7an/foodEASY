@@ -14,12 +14,9 @@
         </div>
         <div class="mb-3">
             <label for="quantity" class="form-label">Množstvo</label>
-            <input type="number" class="form-control" id="quantity" name="quantity" min="1" required>
+            <input type="number" class="form-control" id="amount" name="quantity" min="1" required>
         </div>
-        <div class="mb-3">
-          <label for="quantity" class="form-label">Gramáž</label>
-          <input type="number" class="form-control" id="quantity" name="quantity" min="1" required>
-      </div>
+      
         <button type="submit" class="btn btn-primary">Pridať položku</button>
     </form>
 
