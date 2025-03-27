@@ -103,7 +103,7 @@ class AiClassifier extends Model
     
             $data = json_decode($response->getBody(), true);
 
-            dd($data);
+
     
             if (empty($data['foods'])) {
                 return null;
@@ -115,8 +115,10 @@ class AiClassifier extends Model
     
             return [
                 'description' => $food['food_name'], 
-                'calories' => round($calories, 2),
-                'unit' => 'kcal/100g'
+                'calories'    => round($calories, 2),
+                'unit'        => 'kcal/100g',
+                'image'       => $image
+
             ];
     
         } catch (\Exception $e) {

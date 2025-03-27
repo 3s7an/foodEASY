@@ -9,7 +9,7 @@ class CreateShoppingListsTable extends Migration
     {
         Schema::create('shopping_lists', function (Blueprint $table) {
             $table->id();
-            $table->string('name'); // Názov zoznamu
+            $table->string('name'); 
             $table->timestamps();
         });
     }

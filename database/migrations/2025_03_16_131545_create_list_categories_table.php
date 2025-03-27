@@ -10,7 +10,8 @@ class CreateListCategoriesTable extends Migration
     {
         Schema::create('list_categories', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique(); // Názov kategórie
+            $table->string('name')->unique();
+            $table->string('name_en')->unique();
             $table->timestamps();
         });
     }

@@ -15,11 +15,11 @@ return new class extends Migration
             Schema::create('recipe_items', function (Blueprint $table) {
                 $table->id();
                 $table->string('name');
-                $table->integer('quantity');
+                $table->integer('amount');
+                $table->string('amount_unit');
                 $table->integer('calories');
                 $table->string('image', 255)->nullable();
                 $table->foreignId('recipe_id')->constrained()->onDelete('cascade');
-                $table->foreign('recipe_id')->references('id')->on('recipe')->onDelete('set null');
                 $table->timestamps();
             });
      
