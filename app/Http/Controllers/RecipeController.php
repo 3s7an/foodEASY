@@ -5,13 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\AiClassifier;
 use App\Models\Recipe;
 use App\Models\RecipeItem;
+use App\Models\ShoppingList;
 use Illuminate\Http\Request;
 
 class RecipeController extends Controller
 {
   public function index(){
     $recipes = Recipe::with('recipe_items')->get();
-    return view('recipes.index', compact('recipes'));
+    $shoppingLists = ShoppingList::with('products')->get();
+    return view('recipes.index', compact('recipes', 'shoppingLists'));
   }
 
   public function show($recipeId){
