@@ -103,7 +103,6 @@ class AiClassifier extends Model
     
             $data = json_decode($response->getBody(), true);
 
-            dd($data['foods']);
 
 
     

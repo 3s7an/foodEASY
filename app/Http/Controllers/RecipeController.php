@@ -54,7 +54,6 @@ class RecipeController extends Controller
     $product_name = AiClassifier::translateProductName($product_name);
     $data = AiClassifier::getNutrients($product_name);
 
-    $calories = ($data['calories'] / 100) * $request->amount;
     $image = $data['image'] ?? '';
 
 

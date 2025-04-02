@@ -18,6 +18,7 @@ return new class extends Migration
                 $table->integer('amount');
                 $table->string('amount_unit');
                 $table->integer('calories');
+                $table->integer('fat');
                 $table->integer('saturated_fat');
                 $table->integer('cholesterol');
                 $table->integer('total_carbohydrate');
