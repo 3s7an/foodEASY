@@ -21,5 +21,6 @@ Route::get('/recipes', [RecipeController::class, 'index'])->name('recipes.index'
 Route::get('/recipes/{recipesId}', [RecipeController::class, 'show'])->name('recipes.show');
 Route::post('/recipes/store{recipesId}/items', [RecipeController::class, 'store'])->name('recipes.store');
 Route::post('recipes/add-to-list', [RecipeController::class, 'add_to_list'])->name('recipe.add_to_list');
+Route::post('recipes/{recipe_id}/upload-image', [RecipeController::class, 'upload_image'])->name('recipe.upload_image');
 
 

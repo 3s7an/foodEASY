@@ -18,6 +18,11 @@ return new class extends Migration
                 $table->integer('amount');
                 $table->string('amount_unit');
                 $table->integer('calories');
+                $table->integer('saturated_fat');
+                $table->integer('cholesterol');
+                $table->integer('total_carbohydrate');
+                $table->integer('sugar');
+                $table->integer('protein');
                 $table->string('image', 255)->nullable();
                 $table->foreignId('recipe_id')->constrained()->onDelete('cascade');
                 $table->timestamps();

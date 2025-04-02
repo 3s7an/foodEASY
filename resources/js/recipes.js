@@ -7,9 +7,10 @@ const app = createApp({
             modalTitle: ''
         };
     },
-    methods: {
-        openModal(recipeName) {
+    methods: { 
+        openModal(recipeName, recipeId) {
             this.modalTitle = recipeName || 'Bez názvu'; 
+            this.selectedRecipeId = recipeId;
             const modal = new bootstrap.Modal(document.getElementById('recipeModal')); 
             modal.show();
         },

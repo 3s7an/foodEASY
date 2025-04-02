@@ -103,21 +103,35 @@ class AiClassifier extends Model
     
             $data = json_decode($response->getBody(), true);
 
+            dd($data['foods']);
+
 
     
             if (empty($data['foods'])) {
                 return null;
             }
     
-            $food = $data['foods'][0];
-            $image = $food['photo']['thumb'];
-            $calories = $food['nf_calories'] ?? 0; 
+            $food               = $data['foods'][0];
+            $image              = $food['photo']['thumb'];
+            $calories           = $food['nf_calories'] ?? 0; 
+            $fat                = $food['nf_total_fat'] ?? 0;
+            $saturated_fat      = $food['nf_saturated_fat'] ?? 0;
+            $cholesterol        = $food['nf_cholesterol'] ?? 0;
+            $total_carbo        = $food['nf_total_carbohydrate'] ?? 0;
+            $sugar              = $food['nf_sugars'] ?? 0;
+            $protein            = $food['nf_protein'] ?? 0;
     
             return [
-                'description' => $food['food_name'], 
-                'calories'    => round($calories, 2),
-                'unit'        => 'kcal/100g',
-                'image'       => $image
+                'description'   => $food['food_name'], 
+                'calories'      => round($calories, 2),
+                'fat'           => $fat,
+                'saturated_fat' => $saturated_fat,
+                'cholesterol'   =>  $cholesterol,
+                'total_carbohydrate' => $total_carbo,
+                'sugar'         => $sugar,
+                'protein'       => $protein,
+                'unit'          => 'kcal/100g',
+                'image'         => $image
 
             ];
     

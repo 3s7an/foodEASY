@@ -13,9 +13,9 @@ class ListCategorySeeder extends Seeder
      */
     public function run(): void
     {
-        $categories = ['Fruits', 'Vegetables', 'Meats', 'Beverages', 'Baked goods'];
+        $categories = ['Fruits', 'Vegetables', 'Meats', 'Beverages', 'Baked goods', 'Unknown'];
         foreach ($categories as $category) {
-            ListCategory::create(['name' => $category]);
+            ListCategory::create(['name' => $category, 'name_en' => $category]);
         }
     }
 }
