@@ -50,27 +50,31 @@ class RecipeController extends Controller
     ]);
 
     $product_name = $request->name;
+    $amount = $request->amount;
 
     $product_name = AiClassifier::translateProductName($product_name);
-    $data = AiClassifier::getNutrients($product_name);
-
-    $image = $data['image'] ?? '';
 
 
-    RecipeItem::create([
-      'name'                => $request->name,
-      'amount'              => $request->amount,
-      'amount_unit'         => $request->amount_unit,
-      'calories'            => ($data['calories'] / 100) * $request->amount,
-      'fat'                 => ($data['fat'] / 100) * $request->amount,
-      'saturated_fat'       => ($data['saturated_fat'] / 100) * $request->amount,
-      'cholesterol'         => ($data['cholesterol'] / 100) * $request->amount,
-      'total_carbohydrate'  => ($data['total_carbohydrate'] / 100) * $request->amount,
-      'sugar'               => ($data['sugar'] / 100) * $request->amount,
-      'protein'             => ($data['protein'] / 100) * $request->amount,
-      'image'               => $image,
-      'recipe_id'           => $recipeId
-    ]);
+
+    $data = AiClassifier::getNutrients($product_name, $amount);
+
+    if($data != null){
+      RecipeItem::create([
+        'name'                => $request->name,
+        'weight'              => $data['weight'],
+        'weight_cooked'       => $data['weight_cooked'],
+        'weight_unit'         => $request->amount_unit,
+        'calories'            => $data['calories'],
+        'fat'                 => $data['fat'],
+        'saturated_fat'       => $data['saturated_fat'],
+        'cholesterol'         => $data['cholesterol'],
+        'total_carbohydrate'  => $data['total_carbohydrate'],
+        'sugar'               => $data['sugar'],
+        'protein'             => $data['protein'],
+        'image'               => $data['image'] ?? '',
+        'recipe_id'           => $recipeId
+      ]);
+    }
 
     return redirect()->route('recipes.show', $recipeId)->with('success', 'Recept bol pridaný!');
   }

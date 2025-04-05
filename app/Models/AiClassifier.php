@@ -83,8 +83,7 @@ class AiClassifier extends Model
         }
     }
 
-    public static function getNutrients($productName)
-    {
+    public static function getNutrients($product_name, $product_weight){
         $client = new Client();
         $appId = env('NUTRITIONIX_APP_ID'); 
         $apiKey = env('NUTRITIONIX_API_KEY'); 
@@ -97,7 +96,7 @@ class AiClassifier extends Model
                     'Content-Type' => 'application/json',
                 ],
                 'json' => [
-                    'query' => "100g $productName",
+                    'query' => "$product_weight g $product_name",
                 ],
             ]);
     
@@ -105,12 +104,12 @@ class AiClassifier extends Model
 
 
 
-    
             if (empty($data['foods'])) {
                 return null;
             }
     
             $food               = $data['foods'][0];
+
             $image              = $food['photo']['thumb'];
             $calories           = $food['nf_calories'] ?? 0; 
             $fat                = $food['nf_total_fat'] ?? 0;
@@ -119,7 +118,68 @@ class AiClassifier extends Model
             $total_carbo        = $food['nf_total_carbohydrate'] ?? 0;
             $sugar              = $food['nf_sugars'] ?? 0;
             $protein            = $food['nf_protein'] ?? 0;
-    
+
+
+
+            $cooking_koeficients = [
+              'rice' => 3.0,              // Biela ryža (100g surovej → ~300g uvarenej)
+              'brown rice' => 2.5,        // Hnedá ryža (menej absorbuje vodu, ~250g)
+              'wild rice' => 2.5,         // Divoká ryža (~250g)
+              'basmati rice' => 3.0,      // Basmati ryža (~300g)
+              'jasmine rice' => 3.0,      // Jazmínová ryža (~300g)
+              'sticky rice' => 3.0,       // Lepkavá ryža (~300g)
+              'arborio rice' => 3.0,      // Arborio ryža (rizoto, ~300g)
+
+              // Cestoviny a podobné
+              'pasta' => 2.5,             // Cestoviny (špagety, penne, ~250g)
+              'noodles' => 2.5,           // Rezance (napr. vaječné, ~250g)
+              'gnocchi' => 1.5,           // Gnocchi (menej vody, ~150g)
+
+              // Obilniny
+              'quinoa' => 3.0,            // Quinoa (~300g)
+              'oats' => 2.5,              // Ovsené vločky (~250g, závisí od kaše)
+              'bulgur' => 2.5,            // Bulgur (~250g)
+              'couscous' => 2.0,          // Kuskus (~200g)
+              'millet' => 3.0,            // Pšeno (~300g)
+              'buckwheat' => 2.5,         // Pohánka (~250g)
+              'barley' => 2.5,            // Jačmenné krúpy (~250g)
+              'farro' => 2.5,             // Farro (~250g)
+              'spelt' => 2.5,             // Špalda (~250g)
+              'amaranth' => 3.0,          // Amarant (~300g)
+
+              // Strukoviny
+              'lentils' => 2.5,           // Šošovica (všeobecne, ~250g)
+              'red lentils' => 2.5,       // Červená šošovica (~250g)
+              'green lentils' => 2.5,     // Zelená šošovica (~250g)
+              'beans' => 2.5,             // Fazuľa (všeobecne, ~250g)
+              'black beans' => 2.5,       // Čierne fazule (~250g)
+              'kidney beans' => 2.5,      // Obličkové fazule (~250g)
+              'white beans' => 2.5,       // Biele fazule (~250g)
+              'chickpeas' => 2.5,         // Cícer (~250g)
+              'peas' => 2.0,              // Hrášok (suchý, ~200g)
+              'soybeans' => 2.5,          // Sójové bôby (~250g)
+
+              // Zelenina a škrobové suroviny
+              'potatoes' => 1.5,          // Zemiaky (~150g, mierna absorpcia)
+              'sweet potatoes' => 1.5,    // Sladké zemiaky (~150g)
+              'corn' => 2.5,              // Kukurica (suchá, ~250g)
+              'polenta' => 3.0,           // Polenta (kukuričná kaša, ~300g)
+
+              // Ostatné
+              'tapioca' => 2.5,           // Tapioka (perly, ~250g)
+              'semolina' => 2.5,          // Krupica (~250g)
+              'wheat berries' => 2.5,     // Pšeničné zrná (~250g)
+          ];
+
+          $weight_cooked = 0;
+
+          if(array_key_exists($food['food_name'], $cooking_koeficients)){
+
+            $weight_cooked = $product_weight * $cooking_koeficients[$food['food_name']];
+
+          }
+
+ 
             return [
                 'description'   => $food['food_name'], 
                 'calories'      => round($calories, 2),
@@ -129,13 +189,16 @@ class AiClassifier extends Model
                 'total_carbohydrate' => $total_carbo,
                 'sugar'         => $sugar,
                 'protein'       => $protein,
-                'unit'          => 'kcal/100g',
-                'image'         => $image
+                'unit'          => 'kcal',
+                'image'             => $image,
+                'weight'        => $product_weight,
+                'weight_cooked' => $weight_cooked
 
             ];
     
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Chyba: ' . $e->getMessage());
+            return null;
+
         }
     }
 }

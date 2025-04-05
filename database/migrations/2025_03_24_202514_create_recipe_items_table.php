@@ -15,8 +15,9 @@ return new class extends Migration
             Schema::create('recipe_items', function (Blueprint $table) {
                 $table->id();
                 $table->string('name');
-                $table->integer('amount');
-                $table->string('amount_unit');
+                $table->integer('weight');
+                $table->integer('weight_cooked');
+                $table->string('weight_unit');
                 $table->integer('calories');
                 $table->integer('fat');
                 $table->integer('saturated_fat');

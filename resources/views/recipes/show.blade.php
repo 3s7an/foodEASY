@@ -33,10 +33,6 @@
                         <span>{{ $total_calories }} kcal</span>
                     </div>
                     <div class="col d-flex justify-content-between border-bottom py-2">
-                        <span class="fw-medium">Tuky:</span>
-                        <span>{{ $total_fat }} g</span> <!-- Predpokladám, že máš iné premenné -->
-                    </div>
-                    <div class="col d-flex justify-content-between border-bottom py-2">
                         <span class="fw-medium">Nasýtené mastné kyseliny:</span>
                         <span>{{ $total_saturated_fat }} g</span>
                     </div>
@@ -55,6 +51,10 @@
                     <div class="col d-flex justify-content-between border-bottom py-2">
                         <span class="fw-medium">Bielkoviny:</span>
                         <span>{{ $total_protein }} g</span>
+                    </div>
+                     <div class="col d-flex justify-content-between border-bottom py-2">
+                        <span class="fw-medium">Tuky:</span>
+                        <span>{{ $total_fat }} g</span> <!-- Predpokladám, že máš iné premenné -->
                     </div>
                 </div>
             </div>
@@ -106,7 +106,7 @@
                             @forelse ($recipe->recipe_items as $item)
                                 <tr>
                                     <td>{{ $item->name }}</td>
-                                    <td>{{ $item->amount . ' ' . $item->amount_unit }}</td>
+                                    <td>{{ $item->weight . ' ' . $item->weight_unit }}</td>
                                     <td>{{ $item->calories . ' kcal' }}</td>
                                     <td>
                                         <img src="{{ $item->image }}" alt="{{ $item->name }}" class="img-fluid rounded shadow-sm" style="max-width: 40px; height: auto;">
