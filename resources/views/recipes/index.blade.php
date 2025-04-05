@@ -2,8 +2,6 @@
 
 @section('title', 'Recepty')
 
-@vite('resources/js/recipes.js')
-
 @section('content')
     <div class="container mt-4" id="recipe-app">
         <h1>Recepty</h1>

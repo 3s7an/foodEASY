@@ -7,6 +7,7 @@ use App\Models\ListCategory;
 use App\Models\Product;
 use App\Models\Recipe;
 use App\Models\RecipeItem;
+use App\Models\RecipeProcedure;
 use App\Models\ShoppingList;
 use Illuminate\Http\Request;
 
@@ -28,18 +29,30 @@ class RecipeController extends Controller
     $total_carbohydrate   = NULL;
     $total_sugar          = NULL;
     $total_protein        = NULL;
+    $total_weight         = NULL;
+    $kcal_on_100          = NULL;
+    
 
     foreach($recipe->recipe_items as $item){
       $total_calories += $item->calories;
       $total_fat += $item->fat;
       $total_saturated_fat += $item->saturated_fat;
       $total_cholesterol += $item->cholesterol;
-      $total_carbohydrate += $item->carbohydrate;
+      $total_carbohydrate += $item->total_carbohydrate;
       $total_sugar += $item->sugar;
       $total_protein += $item->protein;
+      if($item->weight_cooked != 0){
+        $total_weight += $item->weight_cooked;
+      } else {
+        $total_weight += $item->weight;
+      }
+    }
+    
+    if(!empty($total_calories) && !empty($total_weight)){
+      $kcal_on_100 = round(($total_calories / $total_weight) * 100);
     }
 
-    return view('recipes.show', compact('recipe', 'total_calories', 'total_fat', 'total_saturated_fat', 'total_cholesterol', 'total_carbohydrate', 'total_sugar', 'total_protein'));
+    return view('recipes.show', compact('recipe', 'total_calories', 'total_fat', 'total_saturated_fat', 'total_cholesterol', 'total_carbohydrate', 'total_sugar', 'total_protein', 'total_weight', 'kcal_on_100'));
   }
 
   public function store(Request $request, $recipeId){
@@ -57,6 +70,7 @@ class RecipeController extends Controller
 
 
     $data = AiClassifier::getNutrients($product_name, $amount);
+
 
     if($data != null){
       RecipeItem::create([
@@ -130,5 +144,24 @@ class RecipeController extends Controller
 
         return redirect()->back()->with('success', 'Obrázok bol úspešne nahraný!');
     }
+  }
+
+  public function procedure_store(Request $request, $recipe_id){
+    $request->validate([
+      'procedure_name'    => 'required|min:3|max:255'
+    ]);
+    
+    $recipe = Recipe::find($recipe_id);
+
+
+    if(!$recipe){
+      return redirect()->back()->with('error', 'Recept nebol nájdený');
+    }
+
+    RecipeProcedure::create([
+      'name'        => $request->procedure_name,
+      'recipe_id'   => $recipe->id
+    ]);
+    return redirect()->back()->with('succes', 'Krok postupu receptu bol pridaný');
   }
 }

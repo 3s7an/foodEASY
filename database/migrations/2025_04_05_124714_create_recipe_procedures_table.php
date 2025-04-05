@@ -11,19 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('recipes', function (Blueprint $table) {
+        Schema::create('recipe_procedures', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('image', 255)->nullable();
+            $table->text('name');
+            $table->foreignId('recipe_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }
 
     /**
-     * Reverse the migrations.
+     * Reverse the migrations
      */
     public function down(): void
     {
-        Schema::dropIfExists('recipes');
+        Schema::dropIfExists('recipe_procedures');
     }
 };

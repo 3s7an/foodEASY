@@ -8,10 +8,16 @@ class Recipe extends Model
 {
     protected $fillable = ['name', 'procedure', 'image'];
 
-    public function recipe_items()
-    {
+    public function recipe_items(){
         return $this->hasMany(RecipeItem::class);
     }
+
+    public function procedures()
+    {
+        return $this->hasMany(RecipeProcedure::class);
+    }
+
+
 
     public function get_image_url(){
         if($this->image){
