@@ -47,12 +47,20 @@ class RecipeController extends Controller
         $total_weight += $item->weight;
       }
     }
+
+    $nutrition_data = [
+      'Tuky'                     => $total_fat,
+      'Nasýtené mastné kyseliny' => $total_saturated_fat,
+      'Sacharidy'                => $total_carbohydrate,
+      'Cukry'                    => $total_sugar,
+      'Bielkoviny'               => $total_protein
+    ];
     
     if(!empty($total_calories) && !empty($total_weight)){
       $kcal_on_100 = round(($total_calories / $total_weight) * 100);
     }
 
-    return view('recipes.show', compact('recipe', 'total_calories', 'total_fat', 'total_saturated_fat', 'total_cholesterol', 'total_carbohydrate', 'total_sugar', 'total_protein', 'total_weight', 'kcal_on_100'));
+    return view('recipes.show', compact('recipe', 'total_calories', 'total_fat', 'total_saturated_fat', 'total_cholesterol', 'total_carbohydrate', 'total_sugar', 'total_protein', 'total_weight', 'kcal_on_100', 'nutrition_data'));
   }
 
   public function store(Request $request, $recipeId){

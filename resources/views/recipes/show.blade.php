@@ -7,13 +7,15 @@
         <!-- Hlavička s názvom receptu a nahrávaním obrázka -->
         <div class="row mb-4 align-items-center">
             <div class="col-md-6">
-                <h1 class="fw-bold text-dark">{{ $recipe->name }}</h1>
+                <h1 class="fw-bold text-dark">Názov receptu: {{ $recipe->name }}</h1>
             </div>
             <div class="col-md-6 text-md-end">
-                <form action="{{ route('recipe.upload_image', $recipe->id) }}" method="POST" enctype="multipart/form-data" class="d-flex align-items-center justify-content-md-end gap-3">
+                <form action="{{ route('recipe.upload_image', $recipe->id) }}" method="POST" enctype="multipart/form-data"
+                    class="d-flex align-items-center justify-content-md-end gap-3">
                     @csrf
                     <div>
-                        <img src="{{ $recipe->get_image_url() }}" alt="Obrázok receptu" class="img-thumbnail shadow-sm" style="max-width: 100px; height: auto;">
+                        <img src="{{ $recipe->get_image_url() }}" alt="Obrázok receptu" class="img-thumbnail shadow-sm"
+                            style="max-width: 100px; height: auto;">
                     </div>
                     <div class="d-flex align-items-center gap-2">
                         <input type="file" name="image" class="form-control form-control-sm" accept="image/*">
@@ -23,11 +25,10 @@
             </div>
         </div>
 
-        <!-- Riadok s položkami receptu (vľavo) a výživovými údajmi (vpravo) -->
         <div class="row mb-4">
-            <!-- Tabuľka s položkami receptu (ľavá strana) -->
+            <!-- Položky receptu -->
             <div class="col-md-6">
-                <div class="card shadow-sm border-0 h-100">
+                <div class="card shadow-sm border-0 h-100 p-4">
                     <div class="card-body">
                         <h2 class="h5 fw-semibold mb-4 text-primary">Položky receptu</h2>
                         <div class="table-responsive">
@@ -47,98 +48,21 @@
                                             <td>{{ $item->weight . ' ' . $item->weight_unit }}</td>
                                             <td>{{ $item->calories . ' kcal' }}</td>
                                             <td>
-                                                <img src="{{ $item->image }}" alt="{{ $item->name }}" class="img-fluid rounded shadow-sm" style="max-width: 40px; height: auto;">
+                                                <img src="{{ $item->image }}" alt="{{ $item->name }}"
+                                                    class="img-fluid rounded shadow-sm"
+                                                    style="max-width: 40px; height: auto;">
                                             </td>
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="4" class="text-center text-muted py-4">Žiadne položky zatiaľ nepridané.</td>
+                                            <td colspan="4" class="text-center text-muted py-4">Žiadne položky zatiaľ
+                                                nepridané.</td>
                                         </tr>
                                     @endforelse
                                 </tbody>
                             </table>
                         </div>
 
-                        <form action="{{ route('recipes.store', $recipe->id) }}" method="POST">
-                          @csrf
-                          <div class="mb-3">
-                              <label for="name" class="form-label fw-medium">Názov položky</label>
-                              <input type="text" class="form-control" id="name" name="name" required>
-                          </div>
-                          <div class="row g-3 mb-4">
-                              <div class="col-md-6">
-                                  <label for="amount" class="form-label fw-medium">Množstvo</label>
-                                  <input type="number" class="form-control" id="amount" name="amount" min="1" required>
-                              </div>
-                              <div class="col-md-6">
-                                  <label for="amount_unit" class="form-label fw-medium">Jednotka</label>
-                                  <select class="form-select" id="amount_unit" name="amount_unit" required>
-                                      <option value="g">g</option>
-                                      <option value="ml">ml</option>
-                                  </select>
-                              </div>
-                          </div>
-                          <button type="submit" class="btn btn-primary">Pridať položku</button>
-                      </form>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Výživové údaje (pravá strana) -->
-            <div class="col-md-6">
-                <div class="card shadow-sm border-0 h-100">
-                    <div class="card-body">
-                        <h2 class="h5 fw-semibold mb-4 text-primary">Výživové údaje</h2>
-                        <ul class="list-unstyled">
-                            <li class="d-flex justify-content-between border-bottom py-2">
-                                <span class="fw-medium">Kalórie:</span>
-                                <span>{{ $total_calories }} kcal</span>
-                            </li>
-                            <li class="d-flex justify-content-between border-bottom py-2">
-                                <span class="fw-medium">Celková hmotnosť:</span>
-                                <span>{{ $total_weight }} g</span>
-                            </li>
-                            <li class="d-flex justify-content-between border-bottom py-2">
-                                <span class="fw-medium">Kcal / 100 g</span>
-                                <span>{{ $kcal_on_100 }} kcal</span>
-                            </li>
-                            <li class="d-flex justify-content-between border-bottom py-2">
-                                <span class="fw-medium">Tuky:</span>
-                                <span>{{ $total_fat }} g</span>
-                            </li>
-                            <li class="d-flex justify-content-between border-bottom py-2">
-                                <span class="fw-medium">Nasýtené mastné kyseliny:</span>
-                                <span>{{ $total_saturated_fat }} g</span>
-                            </li>
-                            <li class="d-flex justify-content-between border-bottom py-2">
-                                <span class="fw-medium">Sacharidy:</span>
-                                <span>{{ $total_carbohydrate }} g</span>
-                            </li>
-                            <li class="d-flex justify-content-between border-bottom py-2">
-                                <span class="fw-medium">Z toho cukry:</span>
-                                <span>{{ $total_sugar }} g</span>
-                            </li>
-                            <li class="d-flex justify-content-between border-bottom py-2">
-                                <span class="fw-medium">Bielkoviny:</span>
-                                <span>{{ $total_protein }} g</span>
-                            </li>
-                            <li class="d-flex justify-content-between border-bottom py-2">
-                                <span class="fw-medium">Cholesterol:</span>
-                                <span>{{ $total_cholesterol }} mg</span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Riadok s formulárom na pridanie položky (vľavo) a postupom (vpravo) -->
-        <div class="row mb-4">
-            <!-- Formulár na pridanie položky (ľavá strana) -->
-            <div class="col-md-6">
-                <div class="card shadow-sm border-0 h-100">
-                    <div class="card-body">
-                        <h2 class="h5 fw-semibold mb-4 text-primary">Pridať položku do receptu</h2>
                         <form action="{{ route('recipes.store', $recipe->id) }}" method="POST">
                             @csrf
                             <div class="mb-3">
@@ -148,7 +72,8 @@
                             <div class="row g-3 mb-4">
                                 <div class="col-md-6">
                                     <label for="amount" class="form-label fw-medium">Množstvo</label>
-                                    <input type="number" class="form-control" id="amount" name="amount" min="1" required>
+                                    <input type="number" class="form-control" id="amount" name="amount" min="1"
+                                        required>
                                 </div>
                                 <div class="col-md-6">
                                     <label for="amount_unit" class="form-label fw-medium">Jednotka</label>
@@ -184,6 +109,61 @@
                     </div>
                 </div>
             </div>
+
         </div>
+
+        <div class="row mb-4">
+          <div class="card shadow-sm border-0 h-100 p-4">
+              <div class="card-body">
+                  <div class="row">
+                      <div class="col-md-6">
+                          <h2 class="h5 fw-semibold mb-4 text-primary">Výživové údaje</h2>
+                          <ul class="list-unstyled">
+                              <li class="d-flex justify-content-between border-bottom py-2">
+                                  <span class="fw-medium">Kalórie:</span>
+                                  <span>{{ $total_calories }} kcal</span>
+                              </li>
+                              <li class="d-flex justify-content-between border-bottom py-2">
+                                  <span class="fw-medium">Celková hmotnosť:</span>
+                                  <span>{{ $total_weight }} g</span>
+                              </li>
+                              <li class="d-flex justify-content-between border-bottom py-2">
+                                  <span class="fw-medium">Kcal / 100 g</span>
+                                  <span>{{ $kcal_on_100 }} kcal</span>
+                              </li>
+                              <li class="d-flex justify-content-between border-bottom py-2">
+                                  <span class="fw-medium">Tuky:</span>
+                                  <span>{{ $total_fat }} g</span>
+                              </li>
+                              <li class="d-flex justify-content-between border-bottom py-2">
+                                  <span class="fw-medium">Nasýtené mastné kyseliny:</span>
+                                  <span>{{ $total_saturated_fat }} g</span>
+                              </li>
+                              <li class="d-flex justify-content-between border-bottom py-2">
+                                  <span class="fw-medium">Sacharidy:</span>
+                                  <span>{{ $total_carbohydrate }} g</span>
+                              </li>
+                              <li class="d-flex justify-content-between border-bottom py-2">
+                                  <span class="fw-medium">Z toho cukry:</span>
+                                  <span>{{ $total_sugar }} g</span>
+                              </li>
+                              <li class="d-flex justify-content-between border-bottom py-2">
+                                  <span class="fw-medium">Bielkoviny:</span>
+                                  <span>{{ $total_protein }} g</span>
+                              </li>
+                              <li class="d-flex justify-content-between border-bottom py-2">
+                                  <span class="fw-medium">Cholesterol:</span>
+                                  <span>{{ $total_cholesterol }} mg</span>
+                              </li>
+                          </ul>
+                      </div>
+                      <div id="app" class="col-md-6 d-flex justify-content-end">
+                            <nutrition-chart :nutrition-data="{{ json_encode($nutrition_data) }}"></nutrition-chart>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+    </div>
     </div>
 @endsection
