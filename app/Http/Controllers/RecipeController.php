@@ -63,7 +63,22 @@ class RecipeController extends Controller
     return view('recipes.show', compact('recipe', 'total_calories', 'total_fat', 'total_saturated_fat', 'total_cholesterol', 'total_carbohydrate', 'total_sugar', 'total_protein', 'total_weight', 'kcal_on_100', 'nutrition_data'));
   }
 
-  public function store(Request $request, $recipeId){
+
+  public function store(Request $request){
+    $request->validate([
+      'name'   => 'required|min:3|max:255'
+    ]);
+  
+    $recipe = Recipe::create([
+      'name'  => $request->name
+    ]);
+
+    /* TODO - po vytvoreni receptu sa presmeruje priamo na show view daneho receptu, zistit ako posielat práve vytvorené idčko */
+
+    return redirect()->route('recipes.index');
+  }
+
+  public function item_store(Request $request, $recipeId){
     $request->validate([
       'name'        => 'required|min:3|max:40',
       'amount'      => 'required|integer',

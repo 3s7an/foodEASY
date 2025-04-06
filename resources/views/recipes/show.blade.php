@@ -3,32 +3,28 @@
 @section('title', 'Domov')
 
 @section('content')
-    <div class="container-fluid my-5">
+    <div class="container my-5">
         <!-- Hlavička s názvom receptu a nahrávaním obrázka -->
         <div class="row mb-4 align-items-center">
-            <div class="col-md-6">
                 <h1 class="fw-bold text-dark">Názov receptu: {{ $recipe->name }}</h1>
-            </div>
-            <div class="col-md-6 text-md-end">
                 <form action="{{ route('recipe.upload_image', $recipe->id) }}" method="POST" enctype="multipart/form-data"
                     class="d-flex align-items-center justify-content-md-end gap-3">
                     @csrf
-                    <div>
-                        <img src="{{ $recipe->get_image_url() }}" alt="Obrázok receptu" class="img-thumbnail shadow-sm"
-                            style="max-width: 100px; height: auto;">
-                    </div>
-                    <div class="d-flex align-items-center gap-2">
-                        <input type="file" name="image" class="form-control form-control-sm" accept="image/*">
-                        <button type="submit" class="btn btn-primary btn-sm">Nahrať</button>
+                    <div class="d-flex flex-column ">
+                        <div>
+                            <img src="{{ $recipe->get_image_url() }}" alt="Obrázok receptu" class="img-thumbnail shadow-sm"
+                                style="max-width: 500px; height: auto;">
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <input type="file" name="image" class="form-control form-control-sm" accept="image/*">
+                            <button type="submit" class="btn btn-primary btn-sm">Nahrať</button>
+                        </div>
                     </div>
                 </form>
-            </div>
         </div>
 
-        <div class="row mb-4">
             <!-- Položky receptu -->
-            <div class="col-md-6">
-                <div class="card shadow-sm border-0 h-100 p-4">
+                <div class="card shadow-sm border-0 h-100 p-4 mb-4">
                     <div class="card-body">
                         <h2 class="h5 fw-semibold mb-4 text-primary">Položky receptu</h2>
             
@@ -65,7 +61,7 @@
                             </div>
                         @endif
             
-                        <form action="{{ route('recipes.store', $recipe->id) }}" method="POST" class="mt-4">
+                        <form action="{{ route('recipes.item_store', $recipe->id) }}" method="POST" class="mt-4">
                             @csrf
                             <div class="mb-3">
                                 <label for="name" class="form-label fw-medium">Názov položky</label>
@@ -88,12 +84,10 @@
                         </form>
                     </div>
                 </div>
-            </div>
             
 
             <!-- Postup (pravá strana) -->
-            <div class="col-md-6">
-                <div class="card shadow-sm border-0 h-100">
+                <div class="card shadow-sm border-0 h-100 mb-4">
                     <div class="card-body">
                         <h2 class="h5 fw-semibold mb-4 text-primary">Postup:</h2>
             
@@ -114,10 +108,8 @@
                         </form>
                     </div>
                 </div>
-            </div>
             
 
-        </div>
 
         <div class="row mb-4">
           <div class="card shadow-sm border-0 h-100 p-4">
