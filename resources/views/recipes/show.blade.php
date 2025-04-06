@@ -31,39 +31,41 @@
                 <div class="card shadow-sm border-0 h-100 p-4">
                     <div class="card-body">
                         <h2 class="h5 fw-semibold mb-4 text-primary">Položky receptu</h2>
-                        <div class="table-responsive">
-                            <table class="table table-hover table-bordered align-middle">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th scope="col">Názov</th>
-                                        <th scope="col">Množstvo</th>
-                                        <th scope="col">Počet kalórií</th>
-                                        <th scope="col">Obrázok</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse ($recipe->recipe_items as $item)
+            
+                        @if ($recipe->recipe_items->count())
+                            <div class="table-responsive">
+                                <table class="table align-middle table-striped table-hover rounded shadow-sm overflow-hidden">
+                                    <thead class="table-primary text-white">
                                         <tr>
-                                            <td>{{ $item->name }}</td>
-                                            <td>{{ $item->weight . ' ' . $item->weight_unit }}</td>
-                                            <td>{{ $item->calories . ' kcal' }}</td>
-                                            <td>
-                                                <img src="{{ $item->image }}" alt="{{ $item->name }}"
-                                                    class="img-fluid rounded shadow-sm"
-                                                    style="max-width: 40px; height: auto;">
-                                            </td>
+                                            <th scope="col">Názov</th>
+                                            <th scope="col">Množstvo</th>
+                                            <th scope="col">Kalórie</th>
+                                            <th scope="col">Obrázok</th>
                                         </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="4" class="text-center text-muted py-4">Žiadne položky zatiaľ
-                                                nepridané.</td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <form action="{{ route('recipes.store', $recipe->id) }}" method="POST">
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($recipe->recipe_items as $item)
+                                            <tr>
+                                                <td class="fw-medium">{{ $item->name }}</td>
+                                                <td>{{ $item->weight }} {{ $item->weight_unit }}</td>
+                                                <td>{{ $item->calories }} kcal</td>
+                                                <td>
+                                                    <img src="{{ $item->image }}" alt="{{ $item->name }}"
+                                                        class="rounded shadow-sm"
+                                                        style="width: 40px; height: 40px; object-fit: cover;">
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        @else
+                            <div class="alert alert-info text-center">
+                                Žiadne položky zatiaľ nepridané.
+                            </div>
+                        @endif
+            
+                        <form action="{{ route('recipes.store', $recipe->id) }}" method="POST" class="mt-4">
                             @csrf
                             <div class="mb-3">
                                 <label for="name" class="form-label fw-medium">Názov položky</label>
@@ -72,8 +74,7 @@
                             <div class="row g-3 mb-4">
                                 <div class="col-md-6">
                                     <label for="amount" class="form-label fw-medium">Množstvo</label>
-                                    <input type="number" class="form-control" id="amount" name="amount" min="1"
-                                        required>
+                                    <input type="number" class="form-control" id="amount" name="amount" min="1" required>
                                 </div>
                                 <div class="col-md-6">
                                     <label for="amount_unit" class="form-label fw-medium">Jednotka</label>
@@ -88,27 +89,33 @@
                     </div>
                 </div>
             </div>
+            
 
             <!-- Postup (pravá strana) -->
             <div class="col-md-6">
                 <div class="card shadow-sm border-0 h-100">
                     <div class="card-body">
                         <h2 class="h5 fw-semibold mb-4 text-primary">Postup:</h2>
-                        <ul class="list-unstyled">
+            
+                        <ol class="list-group list-group-numbered mb-4">
                             @foreach ($recipe->procedures as $procedure)
-                                <li class="justify-content-between border-bottom py-2">
-                                    <span class="fw-medium">{{ $procedure->name }}</span>
+                                <li class="list-group-item d-flex align-items-start">
+                                    <div class="fw-medium">{{ $procedure->name }}</div>
                                 </li>
                             @endforeach
-                        </ul>
+                        </ol>
+            
                         <form action="{{ route('recipe.procedure_store', $recipe->id) }}" method="post">
                             @csrf
-                            <input type="text" class="form-control" id="procedure_name" name="procedure_name" required>
-                            <button type="submit" class="btn btn-primary mt-4">Pridať krok</button>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="procedure_name" name="procedure_name" placeholder="Napíš krok..." required>
+                                <button type="submit" class="btn btn-primary">Pridať krok</button>
+                            </div>
                         </form>
                     </div>
                 </div>
             </div>
+            
 
         </div>
 
@@ -157,8 +164,11 @@
                               </li>
                           </ul>
                       </div>
-                      <div id="app" class="col-md-6 d-flex justify-content-end">
+                      <div id="app" class="col-md-6">
+                        <h2 class="h5 fw-semibold mb-4 text-primary text-center">Rozdelenie výživových hodnôt</h2>
+                        <div class="d-flex justify-content-center align-items-center" style="max-width: 400px; max-height: 400px; margin: 0 auto;">
                             <nutrition-chart :nutrition-data="{{ json_encode($nutrition_data) }}"></nutrition-chart>
+                        </div>
                       </div>
                   </div>
               </div>

@@ -46,7 +46,7 @@ export default defineComponent({
         responsive: true,
         plugins: {
           legend: { position: 'top' },
-          title: { display: true, text: 'Rozdelenie výživových hodnôt' },
+          title: { display: false, text: 'Rozdelenie výživových hodnôt' },
         },
       };
     },
