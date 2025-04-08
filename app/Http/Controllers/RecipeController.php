@@ -9,7 +9,9 @@ use App\Models\Recipe;
 use App\Models\RecipeItem;
 use App\Models\RecipeProcedure;
 use App\Models\ShoppingList;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class RecipeController extends Controller
 {
@@ -187,4 +189,27 @@ class RecipeController extends Controller
     ]);
     return redirect()->back()->with('succes', 'Krok postupu receptu bol pridaný');
   }
+
+  public function destroy($recipe_id){
+    try{
+      $recipe = Recipe::find($recipe_id);
+
+      if (!$recipe) {
+          return redirect()->back()->with('error', 'Plán nebol nájdený.');
+      }
+
+      $recipe->plans()->detach();
+
+      $recipe->delete();
+
+      return redirect('plans.index')->with('succes', 'Plán bol úspešne vymazaný');
+    
+    } catch(ModelNotFoundException $e){
+      return redirect()->back()->with('error', 'Plán neexistuje.');
+    
+    } catch(\Exception $e){
+      Log::error($e->getMessage());
+      return redirect()->back()->with('error', 'Pri mazaní plánu nastala chyba.');
+    }
+}
 }
