@@ -30,16 +30,16 @@ class AiClassifier extends Model
             ]);
     
             $result = json_decode($response->getBody(), true);
-            \Log::info('Hugging Face response: ' . json_encode($result));
+            Log::info('Hugging Face response: ' . json_encode($result));
     
             $category = $result['labels'][0] ?? 'Nonfood';
     
             return in_array($category, $validCategories) ? $category : 'Unknown';
     
         } catch (\Exception $e) {
-            \Log::error('Hugging Face API error: ' . $e->getMessage());
+            Log::error('Hugging Face API error: ' . $e->getMessage());
             if ($e->hasResponse()) {
-                \Log::error('Response: ' . $e->getResponse()->getBody()->getContents());
+                Log::error('Response: ' . $e->getResponse()->getBody()->getContents());
             }
             return 'Unknown';
         }
@@ -50,7 +50,7 @@ class AiClassifier extends Model
         $deepLUrl = 'https://api-free.deepl.com/v2/translate';
         $deepLKey = env('DEEPL_API_KEY');
 
-        \Log::info("Preparing DeepL request: URL=$deepLUrl, Key=$deepLKey, ProductName=$productName");
+        Log::info("Preparing DeepL request: URL=$deepLUrl, Key=$deepLKey, ProductName=$productName");
 
         try {
             $params = [
@@ -65,20 +65,20 @@ class AiClassifier extends Model
                 ],
                 
             ];
-            \Log::info("Request params: " . json_encode($params));
+            Log::info("Request params: " . json_encode($params));
 
             $translateResponse = $client->post($deepLUrl, $params);
             $responseBody = $translateResponse->getBody()->getContents();
-            \Log::info("DeepL response: " . $responseBody);
+            Log::info("DeepL response: " . $responseBody);
 
             $translateResult = json_decode($responseBody, true);
             $translatedName = $translateResult['translations'][0]['text'] ?? $productName;
-            \Log::info("Translated '$productName' to '$translatedName'");
+            Log::info("Translated '$productName' to '$translatedName'");
 
             return $translatedName;
 
         } catch (\Exception $e) {
-            \Log::error('DeepL translation error: ' . $e->getMessage());
+            Log::error('DeepL translation error: ' . $e->getMessage());
             return $productName;
         }
     }

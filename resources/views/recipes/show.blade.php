@@ -6,22 +6,34 @@
     <div class="container my-5">
         <!-- Hlavička s názvom receptu a nahrávaním obrázka -->
         <div class="row mb-4 align-items-center">
-                <h1 class="fw-bold text-dark">Názov receptu: {{ $recipe->name }}</h1>
+            <!-- Ľavá strana: Nadpis -->
+            <div class="col-md-6">
+                <h1 class="fw-bold text-dark mb-0">{{ $recipe->name }}</h1>
+            </div>
+        
+            <!-- Pravá strana: Obrázok + Upload formulár -->
+            <div class="col-md-6 text-md-end">
                 <form action="{{ route('recipe.upload_image', $recipe->id) }}" method="POST" enctype="multipart/form-data"
-                    class="d-flex align-items-center justify-content-md-end gap-3">
+                      class="d-flex flex-column align-items-md-end gap-3">
                     @csrf
-                    <div class="d-flex flex-column ">
-                        <div>
-                            <img src="{{ $recipe->get_image_url() }}" alt="Obrázok receptu" class="img-thumbnail shadow-sm"
-                                style="max-width: 500px; height: auto;">
-                        </div>
-                        <div class="d-flex align-items-center gap-2">
-                            <input type="file" name="image" class="form-control form-control-sm" accept="image/*">
-                            <button type="submit" class="btn btn-primary btn-sm">Nahrať</button>
-                        </div>
+        
+                    <!-- Náhľad obrázka -->
+                    <div>
+                        <img src="{{ $recipe->get_image_url() }}"
+                             alt="Obrázok receptu"
+                             class="img-thumbnail shadow-sm"
+                             style="max-width: 200px; height: auto;">
+                    </div>
+        
+                    <!-- Input a tlačidlo -->
+                    <div class="d-flex align-items-center gap-2">
+                        <input type="file" name="image" class="form-control form-control-sm" accept="image/*">
+                        <button type="submit" class="btn btn-primary btn-sm">Nahrať</button>
                     </div>
                 </form>
+            </div>
         </div>
+        
 
             <!-- Položky receptu -->
                 <div class="card shadow-sm border-0 h-100 p-4 mb-4">

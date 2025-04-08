@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\PlanController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RecipeController;
 use App\Http\Controllers\ShoppingListController;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -21,5 +23,17 @@ Route::post('/recipes/store{recipesId}/items', [RecipeController::class, 'item_s
 Route::post('recipes/add-to-list', [RecipeController::class, 'add_to_list'])->name('recipe.add_to_list');
 Route::post('recipes/{recipe_id}/upload-image', [RecipeController::class, 'upload_image'])->name('recipe.upload_image');
 Route::post('recipes/{reciped_id}/procedure/store', [RecipeController::class, 'procedure_store'])->name('recipe.procedure_store');
+
+/* Stravovací plán */
+Route::resource('plans', PlanController::class)->names([
+    'index' => 'plans.index',
+    'create' => 'plans.create',
+    'store' => 'plans.store',
+    'show' => 'plans.view',
+    'edit' => 'plans.edit',
+    'update' => 'plans.update',
+    'destroy' => 'plans.delete',
+]);
+
 
 

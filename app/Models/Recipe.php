@@ -17,6 +17,10 @@ class Recipe extends Model
         return $this->hasMany(RecipeProcedure::class);
     }
 
+    public function plans(){
+        return $this->belongsToMany(Plan::class, 'plans_recipes');
+    }
+
 
 
     public function get_image_url(){

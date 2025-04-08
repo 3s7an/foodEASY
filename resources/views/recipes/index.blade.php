@@ -7,7 +7,7 @@
       <div class="d-flex align-items-center justify-content-between">
         <h1 >Recepty</h1>
         <button class="btn btn-sm btn-info ml-4" @click="modal_add_recipe()" style="height: 30%">
-          Pridať do zoznamu
+          Vytvoriť nový
       </button>  
       </div>
         <ul class="list-group mt-4">
@@ -18,7 +18,7 @@
                             {{ $recipe->name ?? 'Zoznam #' . $recipe->id }}
                         </a>
                         <button class="btn btn-sm btn-success" @click="modal_recipe_to_list('{{ addslashes($recipe->name) }}', {{ $recipe->id }})">
-                          Pridať do zoznamu
+                          Pridať do nákupného zoznamu
                       </button>                   
                     </div>
                 </li>

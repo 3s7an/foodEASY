@@ -9,22 +9,34 @@
 
 <body>
     <header>
-        <nav class="navbar navbar-light bg-light">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container-fluid">
-                <a class="navbar-brand" href="{{ route('shopping_lists.index') }}">Nákupné zoznamy</a>
+                <a class="navbar-brand" href="#">foodEASY</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('recipes.index') }}">Recepty</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('shopping_lists.index') }}">Nákupné zoznamy</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Stravovacie plány</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </nav>
 
-        <nav class="navbar navbar-light bg-light">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="{{ route('recipes.index') }}">Recepty</a>
-            </div>
-        </nav>
     </header>
 
 
     <main>
-            @yield('content')
+        @yield('content')
     </main>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
