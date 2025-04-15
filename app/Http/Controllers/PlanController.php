@@ -12,16 +12,17 @@ use Illuminate\Support\Facades\Log;
 class PlanController extends Controller
 {
     public function index(){
-        return view('plans.index');
+        $recipes = Recipe::all();
+        return view('plans.index', compact('recipes'));
+
     }
 
     public function store(Request $request) {
 
       $validated_data = $request->validate([
-          'name'  => 'required|min:3|max:180',
-          'date_from'  => 'required|date',
-          'date_to'   => 'required|date',
-          'count'     => 'nullable|integer|min:1',
+          'name'        => 'required|min:3|max:180',
+          'date_from'   => 'required|date',
+          'period'      => 'required|numeric',
           'recipes'    => 'nullable|array',
           'recipes.*'  => 'exists:recipes,id',
       ]);
