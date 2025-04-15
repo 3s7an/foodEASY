@@ -4,12 +4,15 @@
 <head>
     <title>foodEASY</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+
     @vite(['resources/css/app.css', 'resources/css/custom.css', 'resources/js/app.js', 'resources/js/recipes.js'])
 </head>
 
-<body>
+<body class="bg-light">
+
     <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <nav class="navbar navbar-expand-lg navbar-light ">
             <div class="container-fluid">
                 <a class="navbar-brand" href="#">foodEASY</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -25,7 +28,7 @@
                             <a class="nav-link" href="{{ route('shopping_lists.index') }}">Nákupné zoznamy</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Stravovacie plány</a>
+                            <a class="nav-link" href="{{ route('plans.index') }}">Stravovacie plány</a>
                         </li>
                     </ul>
                 </div>
