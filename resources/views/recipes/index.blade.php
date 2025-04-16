@@ -3,7 +3,7 @@
 @section('title', 'Recepty')
 
 @section('content')
-    <div class="container mt-4" id="recipe-app">
+    <div class="container mt-4">
       <div class="d-flex align-items-center justify-content-between">
         <h1 >Recepty</h1>
         <button class="btn btn-sm btn-info ml-4" @click="modal_add_recipe()" style="height: 30%">

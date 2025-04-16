@@ -148,7 +148,7 @@
                                 </li>
                             </ul>
                         </div>
-                        <div id="app" class="col-md-6">
+                        <div class="col-md-6">
                             <h2 class="h5 fw-semibold mb-4 text-primary text-center">Rozdelenie výživových hodnôt</h2>
                             <div class="d-flex justify-content-center align-items-center"
                                 style="max-width: 400px; max-height: 400px; margin: 0 auto;">

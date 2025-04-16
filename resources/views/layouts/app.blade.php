@@ -24,9 +24,9 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('recipes.index') }}">Recepty</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('shopping_lists.index') }}">Nákupné zoznamy</a>
-                        </li>
+                        <!-- <li class="nav-item">
+                            <a class="nav-link" href=">Nákupné zoznamy</a>
+                        </li> -->
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('plans.index') }}">Stravovacie plány</a>
                         </li>
@@ -39,7 +39,9 @@
 
 
     <main>
-        @yield('content')
+        <div id="app">
+            @yield('content')
+        </div>
     </main>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
