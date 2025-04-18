@@ -5,25 +5,33 @@
 @section('content')
     <div class="container mt-4">
       <div class="d-flex align-items-center justify-content-between">
-        <h1 >Recepty</h1>
-        <button class="btn btn-sm btn-info ml-4" @click="modal_add_recipe()" style="height: 30%">
-          Vytvoriť nový
+        <h1 class="fw-bold text-center">Recepty</h1>
+        <button class="btn btn-outline-primary" @click="modal_add_recipe()" style="height: 30%">
+            Nový recept
+            <i class="fas fa-plus fa-xs"></i>
       </button>  
       </div>
-        <ul class="list-group mt-4">
-            @foreach ($recipes as $recipe)
-                <li class="list-group-item">
-                    <div class="d-flex justify-content-between">
-                        <a href="{{ route('recipes.show', $recipe->id) }}">
-                            {{ $recipe->name ?? 'Zoznam #' . $recipe->id }}
-                        </a>
-                        <button class="btn btn-sm btn-success" @click="modal_recipe_to_list('{{ addslashes($recipe->name) }}', {{ $recipe->id }})">
-                          Pridať do nákupného zoznamu
-                      </button>                   
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mt-4">
+        @foreach ($recipes as $recipe)
+            <div class="col">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="card-body d-flex flex-column justify-content-between">
+                        <h5 class="card-title">
+                            <a href="{{ route('recipes.show', $recipe->id) }}" class="text-decoration-none text-dark">
+                                {{ $recipe->name ?? 'Zoznam #' . $recipe->id }}
+                            </a>
+                        </h5>
+                        <div class="mt-auto d-flex justify-content-end">
+                            <button class="btn btn-outline-primary" @click="modal_recipe_to_list('{{ addslashes($recipe->name) }}', {{ $recipe->id }})">
+                                <i class="fas fa-cart-plus me-1"></i>
+                            </button>
+                        </div>
                     </div>
-                </li>
-            @endforeach
-        </ul>
+                </div>
+            </div>
+        @endforeach
+    </div>
+    
 
         <div class="modal fade" id="add_recipe_modal" tabindex="-1" aria-labelledby="add_recipe_modal_label" aria-hidden="true">
           <div class="modal-dialog">

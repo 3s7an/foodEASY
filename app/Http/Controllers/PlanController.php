@@ -15,9 +15,13 @@ use Illuminate\Support\Facades\DB;
 class PlanController extends Controller
 {
     public function index(){
-        $recipes = Recipe::all();
-        return view('plans.index', compact('recipes'));
+        $plans = Plan::all();
+        return view('plans.index', compact('plans'));
+    }
 
+    public function create(){
+      $recipes = Recipe::all();
+      return view('plans.create', compact('recipes'));
     }
 
     public function store(Request $request) {
@@ -58,6 +62,8 @@ class PlanController extends Controller
           }
 
           DB::commit();
+
+          return redirect()->back();
       } catch (\Throwable $e) {
 
           DB::rollBack();

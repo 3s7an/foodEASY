@@ -3,58 +3,29 @@
 @section('title', 'Stravovacie plány')
 
 @section('content')
-<div class="container my-5">
-    <h1 class="fw-bold text-center mb-5">Stravovacie plány</h1>
-
-    <div class="card shadow-sm border-0 rounded-3">
-        <div class="card-body p-4 p-md-5">
-            <h3 class="fw-bold text-center mb-4">Nový stravovací plán</h3>
-            
-            <div id="vue-app">
-                <form action=" {{ route('plans.store') }}" method="POST">
-                    @csrf
-            
-                    <div class="row g-3 mb-4">
-                        <div class="col-md-6">
-                            <label for="date_from" class="form-label fw-medium">Dátum začiatku</label>
-                            <input type="date" 
-                                   name="date_from" 
-                                   id="date_from" 
-                                   class="form-control" 
-                                   v-model="dateFrom"
-                                   required>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="period" class="form-label fw-medium">Obdobie jedálnička</label>
-                            <select id="period" 
-                                    name="period" 
-                                    class="form-select" 
-                                    v-model="period"
-                                    required>
-                                <option value="" disabled selected>Vyber obdobie</option>
-                                <option value="2">2 dni</option>
-                                <option value="7">7 dní</option>
-                                <option value="14">14 dní</option>
-                                <option value="30">30 dní</option>
-                            </select>
-                        </div>
-                    </div>
-            
-                    <meal-plan 
-                        :start-date="dateFrom"
-                        :period="parseInt(period)"
-                        :recipes='@json($recipes)'>
-                    </meal-plan>
-            
-                    <div class="d-flex justify-content-end mt-4">
-                        <button type="submit" class="btn btn-primary btn-lg px-4">
-                            Vytvoriť plán
-                        </button>
-                    </div>
-                </form>
-            </div>
-            
-        </div>
+<div class="container">
+    <div class="d-flex align-items-center justify-content-between">
+        <h1 class="fw-bold text-center">Stravovacie plány</h1>
+        <a href="{{ route('plans.create') }}" class="btn btn-outline-primary">
+            Nový stravovací plán
+            <i class="fas fa-plus fa-xs"></i>
+        </a>
     </div>
+
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mt-4">
+            @foreach ($plans as $plan)
+                <div class="col">
+                    <div class="card h-100 shadow-sm border-0">
+                        <div class="card-body d-flex flex-column justify-content-between">
+                            <h5 class="card-title">
+                                <a href="{{ route('recipes.show', $plan->id) }}" class="text-decoration-none text-dark">
+                                    {{ $plan->name ?? 'Zoznam #' . $plan->id }}
+                                </a>
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
 </div>
 @endsection
