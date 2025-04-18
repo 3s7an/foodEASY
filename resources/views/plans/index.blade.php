@@ -45,7 +45,7 @@
                         :start-date="dateFrom"
                         :period="parseInt(period)"
                         :recipes='@json($recipes)'>
-                </meal-plan>
+                    </meal-plan>
             
                     <div class="d-flex justify-content-end mt-4">
                         <button type="submit" class="btn btn-primary btn-lg px-4">
@@ -55,9 +55,7 @@
                 </form>
             </div>
             
-            
         </div>
     </div>
 </div>
-
 @endsection
