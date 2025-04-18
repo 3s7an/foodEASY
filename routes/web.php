@@ -23,6 +23,9 @@ Route::post('/recipes/store{recipesId}/items', [RecipeController::class, 'item_s
 Route::post('recipes/add-to-list', [RecipeController::class, 'add_to_list'])->name('recipe.add_to_list');
 Route::post('recipes/{recipe_id}/upload-image', [RecipeController::class, 'upload_image'])->name('recipe.upload_image');
 Route::post('recipes/{reciped_id}/procedure/store', [RecipeController::class, 'procedure_store'])->name('recipe.procedure_store');
+Route::delete('/recipes/{recipe_id}', [RecipeController::class, 'destroy'])->name('recipes.destroy');
+Route::delete('/recipes/items/{recipe_item_id}', [RecipeController::class, 'item_destroy'])->name('recipes_item.destroy');
+
 
 /* Stravovací plán */
 Route::resource('plans', PlanController::class)->names([

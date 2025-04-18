@@ -8,7 +8,7 @@
             <h1 class="fw-bold text-dark mb-4 text-center" style="font-size: 3.5rem;">{{ $recipe->name }}</h1>
         </div>
 
-        <!-- Obrazok cez celu sirku -->
+        <!-- Obrazok  -->
         <div class="card shadow-sm border-0 h-100 mb-4">
             <div class="card-body text-center p-0">
                 <img src="{{ $recipe->get_image_url() }}" alt="Obrázok receptu" class="img-fluid w-100"
@@ -30,6 +30,7 @@
                                     <th scope="col">Množstvo</th>
                                     <th scope="col">Kalórie</th>
                                     <th scope="col">Obrázok</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -42,6 +43,14 @@
                                             <img src="{{ $item->image }}" alt="{{ $item->name }}"
                                                 class="rounded shadow-sm"
                                                 style="width: 40px; height: 40px; object-fit: cover;">
+                                        </td>
+                                        <td><form action="{{ route('recipes_item.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Naozaj chceš vymazať túto ingredienciu?')" style="display:inline;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-link text-danger p-0 m-0" style="border: none; background: none;">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
                                         </td>
                                     </tr>
                                 @endforeach

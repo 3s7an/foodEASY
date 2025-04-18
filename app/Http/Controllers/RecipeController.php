@@ -195,14 +195,14 @@ class RecipeController extends Controller
       $recipe = Recipe::find($recipe_id);
 
       if (!$recipe) {
-          return redirect()->back()->with('error', 'Plán nebol nájdený.');
+          return redirect()->back()->with('error', 'Recept nebol nájdený.');
       }
 
       $recipe->plans()->detach();
 
       $recipe->delete();
 
-      return redirect('plans.index')->with('succes', 'Plán bol úspešne vymazaný');
+      return redirect()->route('recipes.index')->with('success', 'Plán bol úspešne vymazaný');
     
     } catch(ModelNotFoundException $e){
       return redirect()->back()->with('error', 'Plán neexistuje.');
@@ -211,5 +211,27 @@ class RecipeController extends Controller
       Log::error($e->getMessage());
       return redirect()->back()->with('error', 'Pri mazaní plánu nastala chyba.');
     }
-}
+  }
+
+  public function item_destroy($recipe_item_id){
+    try{
+      $recipe_item = RecipeItem::find($recipe_item_id);
+
+      if (!$recipe_item) {
+          return redirect()->back()->with('error', 'Položka receptu nebola nájdený.');
+      }
+
+
+      $recipe_item->delete();
+
+      return redirect()->back();
+    
+    } catch(ModelNotFoundException $e){
+      return redirect()->back()->with('error', 'Plán neexistuje.');
+    
+    } catch(\Exception $e){
+      Log::error($e->getMessage());
+      return redirect()->back()->with('error', 'Pri mazaní plánu nastala chyba.');
+    }
+  }
 }
