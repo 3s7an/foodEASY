@@ -11,7 +11,7 @@
             <h3 class="fw-bold text-center mb-4">Nový stravovací plán</h3>
             
             <div id="vue-app">
-                <form action="" method="POST">
+                <form action=" {{ route('plans.store') }}" method="POST">
                     @csrf
             
                     <div class="row g-3 mb-4">
@@ -40,7 +40,6 @@
                         </div>
                     </div>
             
-                    <!-- Vue komponent -->
                     <meal-plan 
                         :start-date="dateFrom"
                         :period="parseInt(period)"

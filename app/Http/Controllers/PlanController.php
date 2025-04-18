@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Plan;
 use App\Models\Recipe;
+use DateTime;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB as FacadesDB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class PlanController extends Controller
 {
@@ -20,22 +23,53 @@ class PlanController extends Controller
     public function store(Request $request) {
 
       $validated_data = $request->validate([
-          'name'        => 'required|min:3|max:180',
           'date_from'   => 'required|date',
           'period'      => 'required|numeric',
-          'recipes'    => 'nullable|array',
-          'recipes.*'  => 'exists:recipes,id',
+          'recipes'     => 'array',
+          'recipes.*'   => 'exists:recipes,id',
       ]);
   
-      if ($validated_data) {
+      try {
+          DB::beginTransaction();
+
+          $period = $validated_data['period'];
+
+          $date_from = new DateTime($validated_data['date_from']);
+          $date_to = (clone $date_from)->modify("+ $period  days");
+
+
           $plan = Plan::create([
-              'name'  => $validated_data['name'],
-              'date_from'  => $validated_data['date_from'],
-              'date_to'   => $validated_data['date_to']
+              'name'      => 'Plán od: ' . $date_from->format('d.m.Y') . ' - ' . $date_to->format('d.m.Y'),
+              'period'    => $validated_data['period'],
+              'date_from' => $date_from->format('Y-m-d'),
+              'date_to'   => $date_to->format('Y-m-d'),
           ]);
+
+          foreach ($validated_data['recipes'] as $recipe) {
+              DB::table('plans_recipes')->insert([
+                  'plan_id'    => $plan->id,
+                  'recipe_id'  => $recipe,
+                  'date'       => $date_from->format('Y-m-d'),
+                  'created_at' => now(),
+                  'updated_at' => now(),
+              ]);
+
+              $date_from->modify('+1 day');
+          }
+
+          DB::commit();
+      } catch (\Throwable $e) {
+
+          DB::rollBack();
+          Log::error('Chyba pri ukladaní plánu: ' . $e->getMessage(), ['exception' => $e]);
+
+          return back()->with('error', 'Nepodarilo sa uložiť plán.');
       }
+
+
+
   
-      if ($plan) {
+      /* if ($plan) {
   
           if ($request->has('random') && $request->has('count')) {
               $allIds = Recipe::pluck('id');
@@ -60,8 +94,8 @@ class PlanController extends Controller
   
       } else {
           return redirect()->back()->with('error', 'Plán sa nepodarilo vytvoriť. Skontrolujte, či všetky údaje sú správne.');
-      }
-  }
+      } */
+    }
   
 
     public function show($plan_id){
@@ -93,38 +127,37 @@ class PlanController extends Controller
         }
     }
 
-    public function update(Request $request, $plan_id)
-{
-    try {
-        $plan = Plan::findOrFail($plan_id);
+    public function update(Request $request, $plan_id){
+      try {
+          $plan = Plan::findOrFail($plan_id);
 
-        
-        //$this->authorize('update', $plan);
+          
+          //$this->authorize('update', $plan);
 
-        $validated = $request->validate([
-            'name'       => 'required|min:3|max:180',
-            'date_from'  => 'required|date',
-            'date_to'    => 'required|date|after_or_equal:date_from',
-            'recipes'    => 'nullable|array',
-            'recipes.*'  => 'exists:recipes,id',
-        ]);
+          $validated = $request->validate([
+              'name'       => 'required|min:3|max:180',
+              'date_from'  => 'required|date',
+              'date_to'    => 'required|date|after_or_equal:date_from',
+              'recipes'    => 'nullable|array',
+              'recipes.*'  => 'exists:recipes,id',
+          ]);
 
-        $plan->update([
-            'name'       => $validated['name'],
-            'date_from'  => $validated['date_from'],
-            'date_to'    => $validated['date_to'],
-        ]);
+          $plan->update([
+              'name'       => $validated['name'],
+              'date_from'  => $validated['date_from'],
+              'date_to'    => $validated['date_to'],
+          ]);
 
 
-        return redirect()->route('plans.view', $plan->id)
-                         ->with('success', 'Plán bol úspešne aktualizovaný.');
+          return redirect()->route('plans.view', $plan->id)
+                          ->with('success', 'Plán bol úspešne aktualizovaný.');
 
-    } catch (ModelNotFoundException $e) {
-        return redirect()->back()->with('error', 'Plán nebol nájdený.');
-    } catch (\Exception $e) {
-        Log::error($e->getMessage());
-        return redirect()->back()->with('error', 'Nastala chyba pri aktualizácii plánu.');
-    }
-}
+      } catch (ModelNotFoundException $e) {
+          return redirect()->back()->with('error', 'Plán nebol nájdený.');
+      } catch (\Exception $e) {
+          Log::error($e->getMessage());
+          return redirect()->back()->with('error', 'Nastala chyba pri aktualizácii plánu.');
+      }
+  }
 
 }

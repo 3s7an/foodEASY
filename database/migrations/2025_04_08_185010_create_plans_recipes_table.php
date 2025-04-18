@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('plan_id');
             $table->unsignedBigInteger('recipe_id');
+            $table->date('date');
 
             $table->foreign('plan_id')->references('id')->on('plans')->onDelete('cascade');
             $table->foreign('recipe_id')->references('id')->on('recipes')->onDelete('cascade');
