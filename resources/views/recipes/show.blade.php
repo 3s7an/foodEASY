@@ -11,13 +11,26 @@
         <!-- Obrazok  -->
         <div class="card shadow-sm border-0 h-100 mb-4">
             <div class="card-body text-center p-0">
-                <img src="{{ $recipe->get_image_url() }}" alt="Obrázok receptu" class="img-fluid w-100"
-                    style="object-fit: cover; max-height: 500px;">
+                @if ($recipe->get_image_url())
+                    <img src="{{ $recipe->get_image_url() }}" alt="Obrázok receptu" class="img-fluid w-100" style="object-fit: cover; max-height: 500px;">
+                @else
+                <form action="{{ route('recipe.upload_image', $recipe->id) }}" method="POST" enctype="multipart/form-data"
+                    class="d-flex flex-column align-items-md-end gap-3">
+                  @csrf
+                  <div class="d-flex align-items-center justify-content-center">
+                      <input type="file" name="image" class="form-control form-control-sm" accept="image/*">
+                      <button type="submit" class="btn btn-primary btn-sm m-4">Nahrať</button>
+                  </div>
+              </form>
+                @endif
+                
             </div>
         </div>
 
+
+
         <!-- Polozky receptu -->
-        <div class="card shadow-sm border-0 h-100 m-0">
+        <div class="card shadow-sm border-0 h-100 mb-4">
             <div class="card-body">
                 <h2 class="h5 fw-semibold mb-4 text-primary">Položky receptu</h2>
 

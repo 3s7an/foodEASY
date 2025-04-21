@@ -30,6 +30,6 @@ class Recipe extends Model
         if($this->image){
             return url('storage/' . $this->image);
         }
-        return 'https://via.placeholder.com/800x400';
+        return null;
     }
 }
