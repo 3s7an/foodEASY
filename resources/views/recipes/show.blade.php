@@ -3,7 +3,7 @@
 @section('title', 'Domov')
 
 @section('content')
-    <div class="container my-5">
+<div class="container-fluid px-5" style="max-width: 60%; margin: 0 auto;">
         <div class="text-center mb-4">
             <h1 class="fw-bold text-dark mb-4 text-center" style="font-size: 3.5rem;">{{ $recipe->name }}</h1>
         </div>
@@ -108,7 +108,7 @@
                 <ol class="list-group list-group-numbered mb-4">
                     @foreach ($recipe->procedures as $procedure)
                         <li class="list-group-item d-flex align-items-start">
-                            <div class="fw-medium">{{ $procedure->name }}</div>
+                            <div class="fw-medium"> {{ $procedure->name }}</div>
                         </li>
                     @endforeach
                 </ol>
