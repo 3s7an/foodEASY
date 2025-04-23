@@ -11,4 +11,13 @@ class Plan extends Model
     public function recipes(){
         return $this->belongsToMany(Recipe::class, 'plans_recipes');
     }
+
+    public function recipes_count(){
+    if ($this->relationLoaded('recipes')) {
+        return $this->recipes->count();
+    }
+
+    return $this->recipes()->count();
+    }
+
 }

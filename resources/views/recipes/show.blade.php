@@ -3,7 +3,7 @@
 @section('title', 'Domov')
 
 @section('content')
-<div class="container-fluid px-5" style="max-width: 60%; margin: 0 auto;">
+    <div class="container-fluid px-5" style="max-width: 60%; margin: 0 auto;">
         <div class="text-center mb-4">
             <h1 class="fw-bold text-dark mb-4 text-center" style="font-size: 3.5rem;">{{ $recipe->name }}</h1>
         </div>
@@ -12,22 +12,20 @@
         <div class="card shadow-sm border-0 h-100 mb-4">
             <div class="card-body text-center p-0">
                 @if ($recipe->get_image_url())
-                    <img src="{{ $recipe->get_image_url() }}" alt="Obrázok receptu" class="img-fluid w-100" style="object-fit: cover; max-height: 500px;">
+                    <img src="{{ $recipe->get_image_url() }}" alt="Obrázok receptu" class="img-fluid w-100"
+                        style="object-fit: cover; max-height: 500px;">
                 @else
-                <form action="{{ route('recipe.upload_image', $recipe->id) }}" method="POST" enctype="multipart/form-data"
-                    class="d-flex flex-column align-items-md-end gap-3">
-                  @csrf
-                  <div class="d-flex align-items-center justify-content-center">
-                      <input type="file" name="image" class="form-control form-control-sm" accept="image/*">
-                      <button type="submit" class="btn btn-primary btn-sm m-4">Nahrať</button>
-                  </div>
-              </form>
+                    <form action="{{ route('recipe.upload_image', $recipe->id) }}" method="POST"
+                        enctype="multipart/form-data" class="d-flex flex-column align-items-md-end gap-3">
+                        @csrf
+                        <div class="d-flex align-items-center justify-content-center">
+                            <input type="file" name="image" class="form-control form-control-sm" accept="image/*">
+                            <button type="submit" class="btn btn-primary btn-sm m-4">Nahrať</button>
+                        </div>
+                    </form>
                 @endif
-                
             </div>
         </div>
-
-
 
         <!-- Polozky receptu -->
         <div class="card shadow-sm border-0 h-100 mb-4">
@@ -35,41 +33,34 @@
                 <h2 class="h5 fw-semibold mb-4 text-primary">Položky receptu</h2>
 
                 @if ($recipe->recipe_items->count())
-                    <div class="table-responsive">
-                        <table class="table align-middle table-striped table-hover rounded shadow-sm overflow-hidden">
-                            <thead class="table-primary text-white">
-                                <tr>
-                                    <th scope="col">Názov</th>
-                                    <th scope="col">Množstvo</th>
-                                    <th scope="col">Kalórie</th>
-                                    <th scope="col">Obrázok</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($recipe->recipe_items as $item)
-                                    <tr>
-                                        <td class="fw-medium">{{ $item->name }}</td>
-                                        <td>{{ $item->weight }} {{ $item->weight_unit }}</td>
-                                        <td>{{ $item->calories }} kcal</td>
-                                        <td>
-                                            <img src="{{ $item->image }}" alt="{{ $item->name }}"
-                                                class="rounded shadow-sm"
-                                                style="width: 40px; height: 40px; object-fit: cover;">
-                                        </td>
-                                        <td><form action="{{ route('recipes_item.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Naozaj chceš vymazať túto ingredienciu?')" style="display:inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-link text-danger p-0 m-0" style="border: none; background: none;">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
+                    <ul class="list-unstyled">
+                        @foreach ($recipe->recipe_items as $item)
+                            <li class="d-flex justify-content-between align-items-center mb-3">
+                                <div class="d-flex align-items-center">
+                                    <img src="{{ $item->image }}" alt="{{ $item->name }}"
+                                        class="rounded-circle shadow-sm"
+                                        style="width: 50px; height: 50px; object-fit: cover;">
+                                    <div class="ms-3">
+                                        <h5 class="fw-semibold mb-1">{{ $item->name }}</h5>
+                                        <div class="text-muted">
+                                            <span>{{ $item->weight }} {{ $item->weight_unit }}</span> |
+                                            <span>{{ $item->calories }} kcal</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <form action="{{ route('recipes_item.destroy', $item->id) }}" method="POST"
+                                    onsubmit="return confirm('Naozaj chceš vymazať túto ingredienciu?')"
+                                    style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-link text-danger p-0 m-0"
+                                        style="border: none; background: none;">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </li>
+                        @endforeach
+                    </ul>
                 @else
                     <div class="alert alert-info text-center">
                         Žiadne položky zatiaľ nepridané.
@@ -85,7 +76,8 @@
                     <div class="row g-3 mb-4">
                         <div class="col-md-6">
                             <label for="amount" class="form-label fw-medium">Množstvo</label>
-                            <input type="number" class="form-control" id="amount" name="amount" min="1" required>
+                            <input type="number" class="form-control" id="amount" name="amount" min="1"
+                                required>
                         </div>
                         <div class="col-md-6">
                             <label for="amount_unit" class="form-label fw-medium">Jednotka</label>
@@ -125,62 +117,60 @@
         </div>
 
         <!-- Výživové údaje -->
-        <div class="row mb-4">
-            <div class="card shadow-sm border-0 h-100">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h2 class="h5 fw-semibold mb-4 text-primary">Výživové údaje</h2>
-                            <ul class="list-unstyled">
-                                <li class="d-flex justify-content-between border-bottom py-2">
-                                    <span class="fw-medium">Kalórie:</span>
-                                    <span>{{ $total_calories }} kcal</span>
-                                </li>
-                                <li class="d-flex justify-content-between border-bottom py-2">
-                                    <span class="fw-medium">Celková hmotnosť:</span>
-                                    <span>{{ $total_weight }} g</span>
-                                </li>
-                                <li class="d-flex justify-content-between border-bottom py-2">
-                                    <span class="fw-medium">Kcal / 100 g</span>
-                                    <span>{{ $kcal_on_100 }} kcal</span>
-                                </li>
-                                <li class="d-flex justify-content-between border-bottom py-2">
-                                    <span class="fw-medium">Tuky:</span>
-                                    <span>{{ $total_fat }} g</span>
-                                </li>
-                                <li class="d-flex justify-content-between border-bottom py-2">
-                                    <span class="fw-medium">Nasýtené mastné kyseliny:</span>
-                                    <span>{{ $total_saturated_fat }} g</span>
-                                </li>
-                                <li class="d-flex justify-content-between border-bottom py-2">
-                                    <span class="fw-medium">Sacharidy:</span>
-                                    <span>{{ $total_carbohydrate }} g</span>
-                                </li>
-                                <li class="d-flex justify-content-between border-bottom py-2">
-                                    <span class="fw-medium">Z toho cukry:</span>
-                                    <span>{{ $total_sugar }} g</span>
-                                </li>
-                                <li class="d-flex justify-content-between border-bottom py-2">
-                                    <span class="fw-medium">Bielkoviny:</span>
-                                    <span>{{ $total_protein }} g</span>
-                                </li>
-                                <li class="d-flex justify-content-between border-bottom py-2">
-                                    <span class="fw-medium">Cholesterol:</span>
-                                    <span>{{ $total_cholesterol }} mg</span>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="col-md-6">
-                            <h2 class="h5 fw-semibold mb-4 text-primary text-center">Rozdelenie výživových hodnôt</h2>
-                            <div class="d-flex justify-content-center align-items-center"
-                                style="max-width: 400px; max-height: 400px; margin: 0 auto;">
-                                <nutrition-chart :nutrition-data="{{ json_encode($nutrition_data) }}"></nutrition-chart>
-                            </div>
+        <div class="card shadow-sm border-0 h-100 mb-4">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h2 class="h5 fw-semibold mb-4 text-primary">Výživové údaje</h2>
+                        <ul class="list-unstyled">
+                            <li class="d-flex justify-content-between border-bottom py-2">
+                                <span class="fw-medium">Kalórie:</span>
+                                <span>{{ $total_calories }} kcal</span>
+                            </li>
+                            <li class="d-flex justify-content-between border-bottom py-2">
+                                <span class="fw-medium">Celková hmotnosť:</span>
+                                <span>{{ $total_weight }} g</span>
+                            </li>
+                            <li class="d-flex justify-content-between border-bottom py-2">
+                                <span class="fw-medium">Kcal / 100 g</span>
+                                <span>{{ $kcal_on_100 }} kcal</span>
+                            </li>
+                            <li class="d-flex justify-content-between border-bottom py-2">
+                                <span class="fw-medium">Tuky:</span>
+                                <span>{{ $total_fat }} g</span>
+                            </li>
+                            <li class="d-flex justify-content-between border-bottom py-2">
+                                <span class="fw-medium">Nasýtené mastné kyseliny:</span>
+                                <span>{{ $total_saturated_fat }} g</span>
+                            </li>
+                            <li class="d-flex justify-content-between border-bottom py-2">
+                                <span class="fw-medium">Sacharidy:</span>
+                                <span>{{ $total_carbohydrate }} g</span>
+                            </li>
+                            <li class="d-flex justify-content-between border-bottom py-2">
+                                <span class="fw-medium">Z toho cukry:</span>
+                                <span>{{ $total_sugar }} g</span>
+                            </li>
+                            <li class="d-flex justify-content-between border-bottom py-2">
+                                <span class="fw-medium">Bielkoviny:</span>
+                                <span>{{ $total_protein }} g</span>
+                            </li>
+                            <li class="d-flex justify-content-between border-bottom py-2">
+                                <span class="fw-medium">Cholesterol:</span>
+                                <span>{{ $total_cholesterol }} mg</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h2 class="h5 fw-semibold mb-4 text-primary text-center">Rozdelenie výživových hodnôt</h2>
+                        <div class="d-flex justify-content-center align-items-center"
+                            style="max-width: 380px; max-height: 380px; margin: 0 auto;">
+                            <nutrition-chart :nutrition-data="{{ json_encode($nutrition_data) }}"></nutrition-chart>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
+    </div>
 @endsection

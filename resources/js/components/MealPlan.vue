@@ -65,7 +65,6 @@ export default {
   },
   computed: {
     periodDays() {
-      // zabezpečíme, že periodDays bude vždy pole s platnou dĺžkou
       return Array.from({ length: this.period || 0 });
     },
     totalUsedDays() {
@@ -104,10 +103,9 @@ export default {
         const nextIndex = index + i;
         if (nextIndex >= this.period) break;
 
-        // Ak je nasledujúci deň prázdny, vyplň ho
         if (!this.selectedRecipes[nextIndex]) {
           this.selectedRecipes[nextIndex] = recipeId;
-          this.daysPerRecipe[nextIndex] = 0; // deň je súčasťou receptu, ale nemá vlastné trvanie
+          this.daysPerRecipe[nextIndex] = 0; 
         }
       }
     }

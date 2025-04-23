@@ -16,7 +16,8 @@ class PlanController extends Controller
 {
     public function index(){
         $plans = Plan::all();
-        return view('plans.index', compact('plans'));
+        $recipes = Recipe::all();
+        return view('plans.index', compact('plans', 'recipes'));
     }
 
     public function create(){

@@ -12,6 +12,8 @@
             </button>  
         </div>
 
+        @include('recipes.new_recipe_modal')
+
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mt-4">
             @foreach ($recipes as $recipe)
                 <div class="col">
@@ -37,18 +39,16 @@
                                         </span>
                                     @endif
                                 </div>
-                                <!-- Pridať do zoznamu -->
+                               {{--
                                 <button class="btn btn-outline-primary btn-sm" @click="modal_recipe_to_list('{{ addslashes($recipe->name) }}', {{ $recipe->id }})" title="Pridať do nákupného zoznamu">
                                     <i class="fa fa-cart-plus"></i>
                                 </button>
+                                  --}}
                             </div>
                         </div>
                     </div>
                 </div>
             @endforeach
         </div> 
-
-
-    
     </div>
 @endsection

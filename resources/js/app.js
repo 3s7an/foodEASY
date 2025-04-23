@@ -31,11 +31,23 @@ const app = createApp({
             const modal = bootstrap.Modal.getInstance(document.getElementById('recipeModal')); 
             modal.hide();
         },
-        modal_add_recipe() {
-            this.modalTitle = 'Vytvorenie receptu';
-            const modalElement = document.getElementById('add_recipe_modal');
-            const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
-            modal.show();
+        modal_add_recipe(recipeName, recipeId) {
+            const modalEl = document.getElementById('add_recipe_modal');
+            if (modalEl) {
+                this.modalTitle = recipeName || 'Bez názvu';
+                this.selectedRecipeId = recipeId;
+                const modal = new bootstrap.Modal(modalEl);
+                modal.show();
+            } else {
+                console.warn('Modal #add_recipe_modal not found!');
+            }
+        }, 
+        openNewPlanModal() {
+            const modalEl = document.getElementById('new_plan_modal');
+            if (modalEl) {
+                const modal = new bootstrap.Modal(modalEl);
+                modal.show();
+            }
         }
     },
     mounted() {
