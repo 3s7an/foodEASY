@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\DB;
 class PlanController extends Controller
 {
     public function index(){
-        $plans = Plan::all();
+        $plans = Plan::with('recipes')->get();
         $recipes = Recipe::all();
         return view('plans.index', compact('plans', 'recipes'));
     }

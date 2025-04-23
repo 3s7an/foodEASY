@@ -13,11 +13,15 @@ class Plan extends Model
     }
 
     public function recipes_count(){
-    if ($this->relationLoaded('recipes')) {
-        return $this->recipes->count();
+        if ($this->relationLoaded('recipes')) {
+            return $this->recipes->unique('recipe_id')->count();
+        }
+    
+        return $this->recipes()
+            ->select('recipe_id')
+            ->distinct()
+            ->count('recipe_id');
     }
-
-    return $this->recipes()->count();
-    }
+    
 
 }

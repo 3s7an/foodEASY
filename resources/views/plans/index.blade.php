@@ -30,7 +30,7 @@
 
                         <ul class="list-unstyled mb-3 text-muted small">
                             <li><i class="fas fa-calendar-alt me-1"></i> Vytvorený: {{ $plan->created_at->format('d.m.Y') }}</li>
-                            <li><i class="fas fa-utensils me-1"></i> Receptov: {{ $plan->recipes_count() ?? '0' }}</li>
+                            <li><i class="fas fa-utensils me-1"></i> Receptov: {{ $plan->recipes->unique('id')->count() ?? '0' }}</li>
                             <li><i class="fas fa-clock me-1"></i> Obdobie: {{ $plan->duration ?? 'neuvedené' }}</li>
                         </ul>
  
