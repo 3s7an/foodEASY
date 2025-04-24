@@ -11,6 +11,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB as FacadesDB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class PlanController extends Controller
 {
@@ -31,8 +32,8 @@ class PlanController extends Controller
           'date_from'   => 'required|date',
           'period'      => 'required|numeric',
           'recipes'     => 'array',
-          'recipes.*'   => 'exists:recipes,id',
       ]);
+
   
       try {
           DB::beginTransaction();
@@ -50,7 +51,17 @@ class PlanController extends Controller
               'date_to'   => $date_to->format('Y-m-d'),
           ]);
 
+
           foreach ($validated_data['recipes'] as $recipe) {
+            if($recipe == -1){
+                $recipe = Recipe::inRandomOrder()->first()?->id ?? null;
+            }
+
+            if($recipe == null){
+                throw ValidationException::withMessages([
+                    'recipe' => ['Nedostatok receptov pre náhodný výber.'],
+                ]);
+            }
               DB::table('plans_recipes')->insert([
                   'plan_id'    => $plan->id,
                   'recipe_id'  => $recipe,
