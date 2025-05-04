@@ -6,7 +6,7 @@
 <div class="container mt-4">
     <div class="d-flex align-items-center justify-content-between">
         <h1 class="fw-bold text-center">Stravovacie plány</h1>
-        <button type="button" class="btn btn-outline-primary" @click="openNewPlanModal">
+        <button type="button" class="btn btn-secondary" @click="openNewPlanModal">
             Nový stravovací plán
             <i class="fas fa-plus fa-xs ms-1"></i>
         </button>
@@ -20,7 +20,7 @@
         @foreach ($plans as $plan)
             <div class="col">
                 <div class="card h-100 shadow-sm border-0">
-                    <div class="bg-primary text-white d-flex align-items-center justify-content-center" style="height: 60px;">
+                    <div class="bg-warning text-white d-flex align-items-center justify-content-center" style="height: 60px;">
                         <i class="fas fa-clipboard-list fa-lg me-2"></i>
                         <span class="fw-semibold">Stravovací plán</span>
                     </div>

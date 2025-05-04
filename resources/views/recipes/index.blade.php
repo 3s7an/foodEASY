@@ -6,7 +6,7 @@
     <div class="container mt-4">
         <div class="d-flex align-items-center justify-content-between">
             <h1 class="fw-bold text-center">Recepty</h1>
-            <button class="btn btn-outline-primary" @click="modal_add_recipe()" style="height: 30%">
+            <button class="btn btn-secondary" @click="modal_add_recipe()" style="height: 30%">
                 Nový recept
                 <i class="fas fa-plus fa-xs"></i>
             </button>  
