@@ -14,19 +14,19 @@ class RecipeCategoriesSeeder extends Seeder
     public function run(): void
     {
         $categories = [
-            0 => 'Masité',
-            1 => 'Vegetariánske',
-            2 => 'Vegánske',
-            3 => 'Sladké',
-            4 => 'Polievky',
-            5 => 'Klasická domácnosť',
-            6 => 'Rýchle a jednoduché',
-            7 => 'Orientálne',
-            8 => 'Talianska kuchyňa',
-            9 => 'Azijská kuchyňa'
+            1 => 'Masité',
+            2 => 'Vegetariánske',
+            3 => 'Vegánske',
+            4 => 'Sladké',
+            5 => 'Polievky',
+            6 => 'Klasická domácnosť',
+            7 => 'Rýchle a jednoduché',
+            8 => 'Orientálne',
+            9 => 'Talianska kuchyňa',
+            10 => 'Azijská kuchyňa'
         ];
 
-        for($c = 0; $c <= count($categories); $c++)
+        for($c = 1; $c < count($categories); $c++)
             RecipeCategory::create([
                 'name'      => $categories[$c],
                 'is_active' => true

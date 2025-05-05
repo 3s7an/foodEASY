@@ -5,11 +5,9 @@
       :key="index"
       class="row g-3 align-items-center mb-3"
     >
- 
       <div class="col-md-2">
         <span class="text-muted fs-5">{{ formatDate(index) }}</span>
       </div>
-
 
       <div class="col-md-2">
         <select
@@ -18,8 +16,12 @@
           @change="handleCategoryChange(index)"
         >
           <option value="">Kategória</option>
-          <option v-for="category in categories" :key="category" :value="category">
-            {{ category }}
+          <option
+            v-for="category in categories"
+            :key="category.id"
+            :value="category.id"
+          >
+            {{ category.name }}
           </option>
         </select>
       </div>
@@ -67,13 +69,14 @@ export default {
       type: Number,
       required: true
     },
-    recipes: Array
+    recipes: Array,
+    categories: Array
   },
   data() {
     return {
-      selectedRecipes: [], 
-      daysPerRecipe: [],    
-      selectedCategories: [] 
+      selectedRecipes: [],
+      daysPerRecipe: [],
+      selectedCategories: []
     };
   },
   computed: {
@@ -82,35 +85,19 @@ export default {
     },
     totalUsedDays() {
       return this.daysPerRecipe.reduce((sum, val) => sum + (val || 0), 0);
-    },
-    categories() {
-      const cats = this.recipes.map(r => r.category).filter(Boolean);
-      return [...new Set(cats)];
-    }
-  },
-  watch: {
-    period(newVal) {
-      if (typeof newVal === "number" && newVal > 0) {
-        this.selectedRecipes = Array(newVal).fill('');
-        this.daysPerRecipe = Array(newVal).fill(0);
-        this.selectedCategories = Array(newVal).fill('');
-      }
     }
   },
   methods: {
-
     formatDate(offset) {
       const date = new Date(this.startDate);
       date.setDate(date.getDate() + offset);
       return date.toLocaleDateString('sk-SK');
     },
-
     filteredRecipes(index) {
       const selectedCategory = this.selectedCategories[index];
       if (!selectedCategory) return this.recipes;
-      return this.recipes.filter(recipe => recipe.category === selectedCategory);
+      return this.recipes.filter(recipe => recipe.category_id === selectedCategory);
     },
-
     getAvailableDays(index) {
       const daysUsedBefore = this.daysPerRecipe.reduce((sum, val, i) => {
         if (i < index) return sum + (val || 0);
@@ -119,11 +106,9 @@ export default {
       const remaining = this.period - daysUsedBefore;
       return Array.from({ length: remaining }, (_, i) => i + 1);
     },
-
     applyRecipeToDays(index) {
       const recipeId = this.selectedRecipes[index];
       const duration = this.daysPerRecipe[index];
-
       if (!recipeId || !duration) {
         this.clearFollowingDays(index);
         return;
@@ -139,50 +124,6 @@ export default {
 
       this.clearFollowingDays(index + duration);
     },
-
-
-    handleRecipeChange(index) {
-      const currentRecipe = this.selectedRecipes[index];
-
-      if (this.daysPerRecipe[index] > 0) {
-        this.applyRecipeToDays(index);
-        return;
-      }
-
-      let groupStartIndex = index;
-      while (groupStartIndex > 0 && this.daysPerRecipe[groupStartIndex] === 0) {
-        groupStartIndex--;
-      }
-
-      if (
-        groupStartIndex >= 0 &&
-        this.selectedRecipes[groupStartIndex] !== currentRecipe
-      ) {
-        const originalDuration = this.daysPerRecipe[groupStartIndex];
-        if (originalDuration > index - groupStartIndex) {
-          this.daysPerRecipe[groupStartIndex] = index - groupStartIndex;
-        }
-
-        this.daysPerRecipe[index] = 1;
-        this.applyRecipeToDays(index);
-      }
-    },
-
-    clearFollowingDays(startIndex) {
-      for (let i = startIndex; i < this.period; i++) {
-        if (this.daysPerRecipe[i] > 0) {
-          this.selectedRecipes[i] = '';
-          this.daysPerRecipe[i] = 0;
-        } else if (
-          this.selectedRecipes[i] &&
-          (!this.selectedRecipes[i - 1] || this.selectedRecipes[i] !== this.selectedRecipes[i - 1])
-        ) {
-          this.selectedRecipes[i] = '';
-        }
-      }
-    },
-
-
     handleCategoryChange(index) {
       this.selectedRecipes[index] = ''; 
       this.daysPerRecipe[index] = 0; 

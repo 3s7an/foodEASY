@@ -9,7 +9,7 @@ class Recipe extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'procedure', 'image'];
+    protected $fillable = ['name', 'procedure', 'image', 'category_id'];
 
     public function recipe_items(){
         return $this->hasMany(RecipeItem::class);

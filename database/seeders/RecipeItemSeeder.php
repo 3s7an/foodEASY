@@ -32,8 +32,7 @@ class RecipeItemSeeder extends Seeder
                     'cholesterol' => rand(0, 100),  
                     'total_carbohydrate' => rand(10, 100),  
                     'sugar' => rand(0, 50),  
-                    'protein' => rand(5, 30),  
-                    'image' => 'image' . rand(1, 5) . '.jpg',  
+                    'protein' => rand(5, 30),    
                     'recipe_id' => $recipe->id,  
                 ]);
             }

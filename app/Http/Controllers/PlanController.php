@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Plan;
 use App\Models\Recipe;
+use App\Models\RecipeCategory;
 use DateTime;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -18,7 +19,8 @@ class PlanController extends Controller
     public function index(){
         $plans = Plan::with('recipes')->get();
         $recipes = Recipe::all();
-        return view('plans.index', compact('plans', 'recipes'));
+        $recipe_categories = RecipeCategory::where('is_active', true)->get();
+        return view('plans.index', compact('plans', 'recipes', 'recipe_categories'));
     }
 
     public function create(){

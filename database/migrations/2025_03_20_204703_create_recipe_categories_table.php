@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('parent_id')->nullable()->constrained('recipe_categories')->onDelete('set null');
             $table->boolean('is_active');
+            $table->string('name');
             $table->string('image')->nullable();
             $table->timestamps();
         });

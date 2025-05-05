@@ -27,7 +27,7 @@
                       </div>
                   </div>
 
-                  <meal-plan :start-date="dateFrom" :period="parseInt(period)" :recipes='@json($recipes)'>
+                  <meal-plan :start-date="dateFrom" :period="parseInt(period)" :recipes='@json($recipes)' :categories='@json($recipe_categories)'>
                   </meal-plan>
 
                   <div class="d-flex justify-content-end mt-4">

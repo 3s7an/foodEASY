@@ -25,8 +25,8 @@ class RecipeFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->word,
-            'image' => $this->faker->imageUrl(),
+            'name'          => $this->faker->word,
+            'category_id'   => rand(1, 9)
         ];
     }
-}
+}   

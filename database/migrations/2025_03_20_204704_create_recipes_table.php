@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->integer('time')->default(0);
             $table->string('image', 255)->nullable();
+            $table->foreignId('category_id')->nullable()->constrained('recipe_categories')->onDelete('set null');
             $table->timestamps();
         });
     }
