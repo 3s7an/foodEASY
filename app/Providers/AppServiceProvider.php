@@ -25,7 +25,5 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('bookmark-recipe', function ($user, $recipe) {
             return $user !== null && $user->id !== $recipe->user_id;
         });
-
-        Artisan::command('update:recipe-time', UpdateRecipeTimes::class);
     }
 }

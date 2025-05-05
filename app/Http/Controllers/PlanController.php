@@ -46,7 +46,7 @@ class PlanController extends Controller
 
           $plan = Plan::create([
               'name'      => 'Plán od: ' . $date_from->format('d.m.Y') . ' - ' . $date_to->format('d.m.Y'),
-              'period'    => $validated_data['period'],
+              'duration'   => $period,
               'date_from' => $date_from->format('Y-m-d'),
               'date_to'   => $date_to->format('Y-m-d'),
           ]);
@@ -119,7 +119,7 @@ class PlanController extends Controller
     public function show($plan_id){
         $plan = Plan::with('recipes')->findOrFail($plan_id);
 
-        return view('plans.show',compact($plan));
+        return view('plans.show',compact('plan'));
     }
 
     public function destroy($plan_id){

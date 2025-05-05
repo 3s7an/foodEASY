@@ -5,11 +5,26 @@
       :key="index"
       class="row g-3 align-items-center mb-3"
     >
+ 
       <div class="col-md-2">
         <span class="text-muted fs-5">{{ formatDate(index) }}</span>
       </div>
 
-      <div class="col-md-5">
+
+      <div class="col-md-2">
+        <select
+          class="form-select"
+          v-model="selectedCategories[index]"
+          @change="handleCategoryChange(index)"
+        >
+          <option value="">Kategória</option>
+          <option v-for="category in categories" :key="category" :value="category">
+            {{ category }}
+          </option>
+        </select>
+      </div>
+
+      <div class="col-md-4">
         <select
           class="form-select"
           :name="'recipes[' + index + ']'"
@@ -18,7 +33,7 @@
         >
           <option value="">Vyber recept</option>
           <option
-            v-for="recipe in recipes"
+            v-for="recipe in filteredRecipes(index)"
             :key="recipe.id"
             :value="recipe.id"
           >
@@ -27,7 +42,7 @@
         </select>
       </div>
 
-      <div class="col-md-5">
+      <div class="col-md-4">
         <select
           class="form-select"
           :name="'days_count[' + index + ']'"
@@ -35,11 +50,7 @@
           @change="applyRecipeToDays(index)"
         >
           <option value="">Počet dní</option>
-          <option
-            v-for="n in getAvailableDays(index)"
-            :key="n"
-            :value="n"
-          >
+          <option v-for="n in getAvailableDays(index)" :key="n" :value="n">
             {{ n }} {{ n === 1 ? 'deň' : (n < 5 ? 'dni' : 'dní') }}
           </option>
         </select>
@@ -60,8 +71,9 @@ export default {
   },
   data() {
     return {
-      selectedRecipes: [],
-      daysPerRecipe: []
+      selectedRecipes: [], 
+      daysPerRecipe: [],    
+      selectedCategories: [] 
     };
   },
   computed: {
@@ -70,6 +82,10 @@ export default {
     },
     totalUsedDays() {
       return this.daysPerRecipe.reduce((sum, val) => sum + (val || 0), 0);
+    },
+    categories() {
+      const cats = this.recipes.map(r => r.category).filter(Boolean);
+      return [...new Set(cats)];
     }
   },
   watch: {
@@ -77,15 +93,24 @@ export default {
       if (typeof newVal === "number" && newVal > 0) {
         this.selectedRecipes = Array(newVal).fill('');
         this.daysPerRecipe = Array(newVal).fill(0);
+        this.selectedCategories = Array(newVal).fill('');
       }
     }
   },
   methods: {
+
     formatDate(offset) {
       const date = new Date(this.startDate);
       date.setDate(date.getDate() + offset);
       return date.toLocaleDateString('sk-SK');
     },
+
+    filteredRecipes(index) {
+      const selectedCategory = this.selectedCategories[index];
+      if (!selectedCategory) return this.recipes;
+      return this.recipes.filter(recipe => recipe.category === selectedCategory);
+    },
+
     getAvailableDays(index) {
       const daysUsedBefore = this.daysPerRecipe.reduce((sum, val, i) => {
         if (i < index) return sum + (val || 0);
@@ -94,6 +119,7 @@ export default {
       const remaining = this.period - daysUsedBefore;
       return Array.from({ length: remaining }, (_, i) => i + 1);
     },
+
     applyRecipeToDays(index) {
       const recipeId = this.selectedRecipes[index];
       const duration = this.daysPerRecipe[index];
@@ -103,7 +129,6 @@ export default {
         return;
       }
 
-      // Aplikuj recept na nasledujúce dni
       for (let i = 1; i < duration; i++) {
         const nextIndex = index + i;
         if (nextIndex >= this.period) break;
@@ -112,40 +137,37 @@ export default {
         this.daysPerRecipe[nextIndex] = 0;
       }
 
-      // Vyčisti dni za aktuálnou skupinou
       this.clearFollowingDays(index + duration);
     },
+
+
     handleRecipeChange(index) {
       const currentRecipe = this.selectedRecipes[index];
 
-      // Ak je to prvý deň skupiny (má nenulový počet dní)
       if (this.daysPerRecipe[index] > 0) {
         this.applyRecipeToDays(index);
         return;
       }
 
-      // Nájdi začiatok skupiny (prvý predchádzajúci deň s nenulovým počtom dní)
       let groupStartIndex = index;
       while (groupStartIndex > 0 && this.daysPerRecipe[groupStartIndex] === 0) {
         groupStartIndex--;
       }
 
-      // Ak je aktuálny recept iný ako recept skupiny
       if (
         groupStartIndex >= 0 &&
         this.selectedRecipes[groupStartIndex] !== currentRecipe
       ) {
-        // Skráť počet dní pre pôvodnú skupinu
         const originalDuration = this.daysPerRecipe[groupStartIndex];
         if (originalDuration > index - groupStartIndex) {
           this.daysPerRecipe[groupStartIndex] = index - groupStartIndex;
         }
 
-        // Aplikuj nový recept od aktuálneho indexu
         this.daysPerRecipe[index] = 1;
         this.applyRecipeToDays(index);
       }
     },
+
     clearFollowingDays(startIndex) {
       for (let i = startIndex; i < this.period; i++) {
         if (this.daysPerRecipe[i] > 0) {
@@ -158,12 +180,19 @@ export default {
           this.selectedRecipes[i] = '';
         }
       }
+    },
+
+
+    handleCategoryChange(index) {
+      this.selectedRecipes[index] = ''; 
+      this.daysPerRecipe[index] = 0; 
     }
   },
   created() {
     if (typeof this.period === "number" && this.period > 0) {
       this.selectedRecipes = Array(this.period).fill('');
       this.daysPerRecipe = Array(this.period).fill(0);
+      this.selectedCategories = Array(this.period).fill('');
     } else {
       console.error('Invalid period:', this.period);
     }

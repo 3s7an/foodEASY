@@ -6,10 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Plan extends Model
 {
-    protected $fillable = ['name','date_from', 'date_to', 'period'];
+    protected $fillable = ['name', 'duration', 'date_from', 'date_to'];
 
     public function recipes(){
-        return $this->belongsToMany(Recipe::class, 'plans_recipes');
+        return $this->belongsToMany(Recipe::class, 'plans_recipes')
+        ->withPivot('date')
+        ->orderByPivot('date');
     }
 
     public function recipes_count(){

@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('plans', function (Blueprint $table) {
+        Schema::create('recipe_categories', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->integer('duration');
-            $table->date('date_from');
-            $table->date('date_to');
+            $table->foreignId('parent_id')->nullable()->constrained('recipe_categories')->onDelete('set null');
+            $table->boolean('is_active');
+            $table->string('image')->nullable();
             $table->timestamps();
         });
     }
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('plans');
+        Schema::dropIfExists('recipe_categories');
     }
 };

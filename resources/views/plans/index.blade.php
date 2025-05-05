@@ -30,8 +30,8 @@
 
                         <ul class="list-unstyled mb-3 text-muted small">
                             <li><i class="fas fa-calendar-alt me-1"></i> Vytvorený: {{ $plan->created_at->format('d.m.Y') }}</li>
-                            <li><i class="fas fa-utensils me-1"></i> Receptov: {{ $plan->recipes->unique('id')->count() ?? '0' }}</li>
-                            <li><i class="fas fa-clock me-1"></i> Obdobie: {{ $plan->duration ?? 'neuvedené' }}</li>
+                            <li><i class="fas fa-utensils me-1"></i> Unikátnych receptov: {{ $plan->recipes->unique('id')->count() ?? '0' }}</li>
+                            <li><i class="fas fa-clock me-1"></i> Počet dní: {{ $plan->duration ?? 'neuvedené' }}</li>
                         </ul>
  
                         <div class="mt-auto d-flex justify-content-between align-items-center">
