@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Console\Commands\UpdateRecipeTimes;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -20,8 +22,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Gate::define('bookmark-recipe', function ($user, $$recipe) {
+        Gate::define('bookmark-recipe', function ($user, $recipe) {
             return $user !== null && $user->id !== $recipe->user_id;
         });
+
+        Artisan::command('update:recipe-time', UpdateRecipeTimes::class);
     }
 }
