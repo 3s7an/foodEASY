@@ -11,12 +11,15 @@ use App\Models\RecipeProcedure;
 use App\Models\ShoppingList;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 class RecipeController extends Controller
 {
   public function index(){
-    $recipes = Recipe::with('recipe_items')->get();
+    $recipes = Cache::remember('recipes_w_items', 15, function(){
+      return Recipe::with('recipe_items')->get(); 
+    });
     $shoppingLists = ShoppingList::with('products')->get();
     return view('recipes.index', compact('recipes', 'shoppingLists'));
   }
@@ -74,6 +77,8 @@ class RecipeController extends Controller
     $recipe = Recipe::create([
       'name'  => $request->name
     ]);
+
+    Cache::forget('recipes_w_items');
 
     /* TODO - po vytvoreni receptu sa presmeruje priamo na show view daneho receptu, zistit ako posielat práve vytvorené idčko */
 
@@ -201,6 +206,8 @@ class RecipeController extends Controller
       $recipe->plans()->detach();
 
       $recipe->delete();
+
+      Cache::forget('recipes_w_items');
 
       return redirect()->route('recipes.index')->with('success', 'Plán bol úspešne vymazaný');
     
