@@ -40,18 +40,29 @@
                     </ul>
                     <div class="d-flex align-items-center">
                         @auth
-                            <ul class="navbar-nav">
-                                <li class="nav-item dropdown">
-                                  <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Dropdown
-                                  </a>
-                                  <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
-                                    <li><a class="dropdown-item" href="#">Action</a></li>
-                                    <li><a class="dropdown-item" href="#">Another action</a></li>
-                                    <li><a class="dropdown-item" href="#">Something else here</a></li>
-                                  </ul>
+                        <div class="dropdown">
+                            <a class="nav-link text-white dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown"
+                                role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-user-circle me-1"></i> {{ Auth::user()->name }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg animate__animated animate__fadeIn"
+                                aria-labelledby="profileDropdown">
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('profile.show') }}">
+                                        <i class="fas fa-user me-2"></i> Profil
+                                    </a>
                                 </li>
-                              </ul>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form method="POST" action="{{ route('logout') }}">
+                                        @csrf
+                                        <button type="submit" class="dropdown-item">
+                                            <i class="fas fa-sign-out-alt me-2"></i> Odhlásiť sa
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
                         @else
                             <a class="btn btn-outline-light me-2 px-4 py-2" href="{{ route('login') }}">
                                 <i class="fas fa-sign-in-alt me-1"></i> Prihlásiť sa
@@ -77,8 +88,8 @@
     </footer>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 
 </html>
 
