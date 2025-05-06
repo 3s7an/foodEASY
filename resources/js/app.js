@@ -3,13 +3,15 @@ import * as bootstrap from 'bootstrap';
 
 import NutritionChart from './components/NutritionChart.vue';
 import MealPlan from './components/MealPlan.vue';
+import Navbar from './components/Navbar.vue';
 
 console.log('Creating Vue app...');
 
 const app = createApp({
     components: {
         NutritionChart,
-        MealPlan
+        MealPlan, 
+        Navbar
     },
     data() {
         return {
