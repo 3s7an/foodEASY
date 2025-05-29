@@ -26,7 +26,8 @@ class RecipeFactory extends Factory
     {
         return [
             'name'          => $this->faker->word,
-            'category_id'   => rand(1, 9)
+            'category_id'   => rand(1, 9),
+            'created_user'  => 1
         ];
     }
 }   

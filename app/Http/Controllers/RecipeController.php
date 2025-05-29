@@ -9,20 +9,37 @@ use App\Models\Recipe;
 use App\Models\RecipeItem;
 use App\Models\RecipeProcedure;
 use App\Models\ShoppingList;
+use Illuminate\Container\Attributes\Auth;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth as FacadesAuth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 class RecipeController extends Controller
 {
-  public function index(){
-    $recipes = Cache::remember('recipes_w_items', 15, function(){
+  public function index(Request $request) {
+    
+    /* AJAX */
+    if ($request->wantsJson()) {
+      if($request->filter == 'mine' && FacadesAuth::check()){
+        $recipes = Recipe::with('recipe_items')->where('created_user', FacadesAuth::id())->get();
+      } else {
+        $recipes = Recipe::with('recipe_items')->get(); 
+      }
+        return response()->json($recipes);
+    } 
+
+    /* BACKEND */
+     $recipes = Cache::remember('recipes_w_items', 15, function() {
       return Recipe::with('recipe_items')->get(); 
     });
+
     $shoppingLists = ShoppingList::with('products')->get();
+
     return view('recipes.index', compact('recipes', 'shoppingLists'));
   }
+
 
   public function show($recipeId){
     $recipe = Recipe::with('recipe_items')->findOrFail($recipeId);

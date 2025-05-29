@@ -4,6 +4,7 @@ import * as bootstrap from 'bootstrap';
 import NutritionChart from './components/NutritionChart.vue';
 import MealPlan from './components/MealPlan.vue';
 import Navbar from './components/Navbar.vue';
+import Recipes from './components/Recipes.vue';
 
 console.log('Creating Vue app...');
 
@@ -11,7 +12,8 @@ const app = createApp({
     components: {
         NutritionChart,
         MealPlan, 
-        Navbar
+        Navbar,
+        Recipes
     },
     data() {
         return {
@@ -57,10 +59,13 @@ const app = createApp({
     }
 });
 
-// Globálna registrácia (pre istotu)
+
 app.component('meal-plan', MealPlan);
 app.component('nutrition-chart', NutritionChart);
+app.component('recipes', Recipes);
+app.component('navbar', Navbar);
 
+// DEBUG
 console.log('Mounting Vue app...');
 try {
     app.mount('#app');

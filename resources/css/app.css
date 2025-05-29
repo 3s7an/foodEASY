@@ -10,3 +10,111 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+.navbar {
+    padding: 1.2rem 0;
+}
+
+.navbar-brand {
+    font-size: 1.8rem;
+    color: #f8f9fa !important;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.navbar-brand:hover {
+    transform: scale(1.05);
+    color: #ffffff !important;
+}
+
+.nav-link {
+    font-weight: 500;
+    color: #f8f9fa !important;
+    border-radius: 0.5rem;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff !important;
+}
+
+.nav-link.active {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff !important;
+}
+
+.btn-outline-light,
+.btn-light {
+    border-radius: 0.5rem;
+    font-weight: 500;
+    padding: 0.5rem 1.5rem;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.btn-outline-light:hover {
+    transform: translateY(-2px);
+    background-color: #f8f9fa;
+    color: #d2a00f;
+}
+
+.btn-light:hover {
+    transform: translateY(-2px);
+    background-color: #e9ecef;
+    color: #d2a00f;
+}
+
+.dropdown-menu {
+    border-radius: 0.75rem;
+    background-color: #fff;
+    padding: 0.5rem 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-item {
+    padding: 0.5rem 1.5rem;
+    transition: background-color 0.3s ease;
+}
+
+.dropdown-item:hover {
+    background-color: #f1f3f5;
+}
+
+.navbar-toggler {
+    transition: transform 0.3s ease;
+}
+
+.navbar-toggler:hover {
+    transform: scale(1.1);
+}
+
+.sidebar-link {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #495057;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    transition: color 0.2s ease, background-color 0.2s ease;
+    padding: 0.5rem 0.25rem;
+    border-radius: 0.375rem;
+    width: 100%;
+}
+
+.sidebar-link:hover {
+    background-color: #dee2e6;
+    color: #d2a00f;
+}
+
+footer {
+    font-size: 0.9rem;
+}
+
+.btn-mustard {
+    background-color: #d4a115;
+    color: #fff;
+  }
+  .btn-mustard:hover {
+    background-color: #b88f12;
+    color: #fff;
+  }
+  

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->integer('time')->default(0);
             $table->string('image', 255)->nullable();
             $table->foreignId('category_id')->nullable()->constrained('recipe_categories')->onDelete('set null');
+            $table->foreignId('created_user')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
     }
