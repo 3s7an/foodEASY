@@ -20,7 +20,8 @@ class PlanController extends Controller
         $plans = Plan::with('recipes')->get();
         $recipes = Recipe::all();
         $recipe_categories = RecipeCategory::where('is_active', true)->get();
-        return view('plans.index', compact('plans', 'recipes', 'recipe_categories'));
+        $today = now()->format('Y-m-d');
+        return view('plans.index', compact('plans', 'recipes', 'recipe_categories', 'today'));
     }
 
     public function create(){
@@ -30,91 +31,52 @@ class PlanController extends Controller
 
     public function store(Request $request) {
 
-      $validated_data = $request->validate([
-          'date_from'   => 'required|date',
-          'period'      => 'required|numeric',
-          'recipes'     => 'array',
+        dd($request);
+
+        /* VALIDACIA */
+      $validated_data = request()->validate([
+        'generation_mode'   => 'required|',
+        'start_date'        => 'required|date',
+        'days'              => 'required|numeric',
+        'meat_percentage'   => 'required|numeric',
+        'recipe_id'         => 'required',
       ]);
 
-  
-      try {
-          DB::beginTransaction();
+      /* DATUMY */
+      $days = $validated_data['days'];
+      $date_from = new DateTime($validated_data['start_date']);
+      $date_to = (clone $date_from)->modify("+ $days  days");
+    
 
-          $period = $validated_data['period'];
+      /* AUTOMATICKE GENEROVANIE */
+      if($validated_data['generation_mode'] == 'auto'){
 
-          $date_from = new DateTime($validated_data['date_from']);
-          $date_to = (clone $date_from)->modify("+ $period  days");
+        DB::transaction();
+
+        /* VYTVORENIE PLANU */
+        $plan = Plan::create([
+            'name'      => 'Plán od: ' . $date_from->format('d.m.Y') . ' - ' . $date_to->format('d.m.Y'),
+            'duration'   => $days,
+            'date_from' => $date_from->format('Y-m-d'),
+            'date_to'   => $date_to->format('Y-m-d'),
+        ]);
+
+        /*  NAPLNENIE PLANU POLOZKAMI */
+        for($c = 1; $c <= count($validated_data['days']); $c++){
+            $date = (clone $date_from)->modify('+ '.$c.' day');
 
 
-          $plan = Plan::create([
-              'name'      => 'Plán od: ' . $date_from->format('d.m.Y') . ' - ' . $date_to->format('d.m.Y'),
-              'duration'   => $period,
-              'date_from' => $date_from->format('Y-m-d'),
-              'date_to'   => $date_to->format('Y-m-d'),
-          ]);
+            DB::table('plans_recipes')->insert([
+                'plan_id'    => $plan->id,
+                'recipe_id'  => $validated_data[$c]['recipe_id'],
+                'date'       => $date->format('Y-m-d'),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
 
 
-          foreach ($validated_data['recipes'] as $recipe) {
-            if($recipe == -1){
-                $recipe = Recipe::inRandomOrder()->first()?->id ?? null;
-            }
-
-            if($recipe == null){
-                throw ValidationException::withMessages([
-                    'recipe' => ['Nedostatok receptov pre náhodný výber.'],
-                ]);
-            }
-              DB::table('plans_recipes')->insert([
-                  'plan_id'    => $plan->id,
-                  'recipe_id'  => $recipe,
-                  'date'       => $date_from->format('Y-m-d'),
-                  'created_at' => now(),
-                  'updated_at' => now(),
-              ]);
-
-              $date_from->modify('+1 day');
-          }
-
-          DB::commit();
-
-          return redirect()->back();
-      } catch (\Throwable $e) {
-
-          DB::rollBack();
-          Log::error('Chyba pri ukladaní plánu: ' . $e->getMessage(), ['exception' => $e]);
-
-          return back()->with('error', 'Nepodarilo sa uložiť plán.');
+        }
       }
-
-
-
-  
-      /* if ($plan) {
-  
-          if ($request->has('random') && $request->has('count')) {
-              $allIds = Recipe::pluck('id');
-              $count = min($request->count, $allIds->count());
-  
-              if ($count > 0 && $allIds->count() > 0) {
-                  $randomIds = Arr::random($allIds->toArray(), $count);
-                  foreach ($randomIds as $id) {
-                      $plan->recipes()->attach($id);
-                  }
-              } else {
-                  return redirect()->back()->with('error', 'Nemáš potrebný počet receptov. Skús nejaké pridať.');
-              }
-          } else {
-
-              if (isset($validated_data['recipes']) && count($validated_data['recipes']) > 0) {
-                  $plan->recipes()->sync($validated_data['recipes']);
-              }
-          }
-  
-          return redirect()->route('plans.view', $plan->id)->with('success', 'Plán bol vytvorený a recepty priradené.');
-  
-      } else {
-          return redirect()->back()->with('error', 'Plán sa nepodarilo vytvoriť. Skontrolujte, či všetky údaje sú správne.');
-      } */
     }
   
 

@@ -12,18 +12,22 @@
 </head>
 
 <body style="overflow: hidden; font-family: 'Roboto', sans-serif; background-color: #f8f9fa;">
-    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg shadow-lg fixed-top" style="background: linear-gradient(to right, #d2a00f, #e9b61d); z-index: 1030; height: 50px;">
         <div class="container-fluid px-4">
+            <!-- Logo naľavo -->
             <a class="navbar-brand text-white fw-bold d-flex align-items-center" href="{{ url('/') }}">
                 <i class="fas fa-utensils me-2"></i> foodEASY
             </a>
+    
+            <!-- Hamburger tlačidlo -->
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
                 aria-label="Prepnúť navigáciu">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
+    
+            <!-- Navigácia a tlačidlá doprava -->
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <div class="d-flex align-items-center">
                     @auth
                     <div class="dropdown">
@@ -61,8 +65,7 @@
             </div>
         </div>
     </nav>
-
-    <!-- Sidebar -->
+    
     <aside class="position-fixed bg-light border-end d-flex flex-column align-items-start py-4 px-3"
         style="top: 50px; left: 0; height: calc(100vh - 70px); width: 120px; z-index: 1020;">
         <a href="#" class="sidebar-link mb-3"><i class="fas fa-home me-2 text-decoration-none"></i> Domov</a>
