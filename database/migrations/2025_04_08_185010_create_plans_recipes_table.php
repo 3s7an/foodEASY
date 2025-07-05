@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('plan_id');
             $table->unsignedBigInteger('recipe_id');
             $table->date('date');
+            $table->enum('food_type', ['breakfast', 'lunch', 'dinner']);
 
             $table->foreign('plan_id')->references('id')->on('plans')->onDelete('cascade');
             $table->foreign('recipe_id')->references('id')->on('recipes')->onDelete('cascade');

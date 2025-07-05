@@ -6,9 +6,11 @@ use App\Models\Plan;
 use App\Models\Recipe;
 use App\Models\RecipeCategory;
 use DateTime;
+use Dotenv\Validator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB as FacadesDB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
@@ -30,54 +32,11 @@ class PlanController extends Controller
     }
 
     public function store(Request $request) {
-
-        dd($request);
-
-        /* VALIDACIA */
-      $validated_data = request()->validate([
-        'generation_mode'   => 'required|',
-        'start_date'        => 'required|date',
-        'days'              => 'required|numeric',
-        'meat_percentage'   => 'required|numeric',
-        'recipe_id'         => 'required',
-      ]);
-
-      /* DATUMY */
-      $days = $validated_data['days'];
-      $date_from = new DateTime($validated_data['start_date']);
-      $date_to = (clone $date_from)->modify("+ $days  days");
-    
-
-      /* AUTOMATICKE GENEROVANIE */
-      if($validated_data['generation_mode'] == 'auto'){
-
-        DB::transaction();
-
-        /* VYTVORENIE PLANU */
-        $plan = Plan::create([
-            'name'      => 'Plán od: ' . $date_from->format('d.m.Y') . ' - ' . $date_to->format('d.m.Y'),
-            'duration'   => $days,
-            'date_from' => $date_from->format('Y-m-d'),
-            'date_to'   => $date_to->format('Y-m-d'),
-        ]);
-
-        /*  NAPLNENIE PLANU POLOZKAMI */
-        for($c = 1; $c <= count($validated_data['days']); $c++){
-            $date = (clone $date_from)->modify('+ '.$c.' day');
-
-
-            DB::table('plans_recipes')->insert([
-                'plan_id'    => $plan->id,
-                'recipe_id'  => $validated_data[$c]['recipe_id'],
-                'date'       => $date->format('Y-m-d'),
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-
-
-        }
-      }
+      
+        dd($request->all());
     }
+
+    
   
 
     public function show($plan_id){

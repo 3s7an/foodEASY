@@ -14,9 +14,12 @@ return new class extends Migration
         Schema::create('plans', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->integer('duration');
-            $table->date('date_from');
-            $table->date('date_to');
+            $table->enum('generation_mode', ['auto', 'manual']);
+            $table->integer('days');
+            $table->date('date_start');
+            $table->date('date_stop');
+            $table->integer('calories');
+            $table->integer('meat_percentage');
             $table->timestamps();
         });
     }
