@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('plan_id');
             $table->unsignedBigInteger('recipe_id');
+            $table->unsignedBigInteger('category_id');
             $table->date('date');
             $table->enum('food_type', ['breakfast', 'lunch', 'dinner']);
 

@@ -34,29 +34,14 @@
           <label class="form-check-label" for="checkbox-breakfast">Raňajky</label>
         </div>
         <div class="form-check form-check-inline">
-          <input class="form-check-input" type="checkbox" id="checkbox-snack1" value="snack1" 
-            v-model="selectedMeals" @change="updateMealSelections" />
-          <label class="form-check-label" for="checkbox-snack1">Desiata</label>
-        </div>
-        <div class="form-check form-check-inline">
           <input class="form-check-input" type="checkbox" id="checkbox-lunch" value="lunch" 
             v-model="selectedMeals" @change="updateMealSelections" />
           <label class="form-check-label" for="checkbox-lunch">Obed</label>
         </div>
         <div class="form-check form-check-inline">
-          <input class="form-check-input" type="checkbox" id="checkbox-snack2" value="snack2" 
-            v-model="selectedMeals" @change="updateMealSelections" />
-          <label class="form-check-label" for="checkbox-snack2">Olovrant</label>
-        </div>
-        <div class="form-check form-check-inline">
           <input class="form-check-input" type="checkbox" id="checkbox-dinner" value="dinner" 
             v-model="selectedMeals" @change="updateMealSelections" />
           <label class="form-check-label" for="checkbox-dinner">Večera</label>
-        </div>
-        <div class="form-check form-check-inline">
-          <input class="form-check-input" type="checkbox" id="checkbox-second-dinner" value="second_dinner" 
-            v-model="selectedMeals" @change="updateMealSelections" />
-          <label class="form-check-label" for="checkbox-second-dinner">Druhá večera</label>
         </div>
       </div>
       <div class="col-md-6">
