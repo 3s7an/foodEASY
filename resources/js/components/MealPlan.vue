@@ -29,17 +29,17 @@
       <div class="col-md-6 d-flex flex-column">
         <label class="form-label d-block mb-2">Jedlá za deň:</label>
         <div class="form-check form-check-inline">
-          <input class="form-check-input" type="checkbox" id="checkbox-breakfast" value="breakfast" 
+          <input class="form-check-input" type="checkbox" id="checkbox-breakfast" value="breakfast" name = "breakfast" 
             v-model="selectedMeals" @change="updateMealSelections" />
           <label class="form-check-label" for="checkbox-breakfast">Raňajky</label>
         </div>
         <div class="form-check form-check-inline">
-          <input class="form-check-input" type="checkbox" id="checkbox-lunch" value="lunch" 
+          <input class="form-check-input" type="checkbox" id="checkbox-lunch" value="lunch" name = "lunch"
             v-model="selectedMeals" @change="updateMealSelections" />
           <label class="form-check-label" for="checkbox-lunch">Obed</label>
         </div>
         <div class="form-check form-check-inline">
-          <input class="form-check-input" type="checkbox" id="checkbox-dinner" value="dinner" 
+          <input class="form-check-input" type="checkbox" id="checkbox-dinner" value="dinner" name = "dinner"
             v-model="selectedMeals" @change="updateMealSelections" />
           <label class="form-check-label" for="checkbox-dinner">Večera</label>
         </div>
@@ -89,7 +89,7 @@
       </div>
     </div>
 
-    <!-- Kalórie -->
+    <!-- Kalórie 
     <div class="form-section">
       <label for="calories" class="form-label">
         Denný kalorický limit:
@@ -97,9 +97,9 @@
       </label>
       <input type="range" class="form-range" id="calories" min="1200" max="3500" step="50" 
         v-model.number="calorieValue" />
-    </div>
+    </div> -->
 
-    <!-- Percento mäsa -->
+    <!-- 
     <div class="form-section">
       <label for="meat-percentage" class="form-label">
         Podiel mäsitých jedál:
@@ -107,7 +107,7 @@
       </label>
       <input type="range" class="form-range" id="meat-percentage" min="0" max="100" step="5" 
         v-model.number="meatPercentage" />
-    </div>
+    </div> --> 
 
     <!-- Submit button -->
     <div class="form-section text-center">
@@ -134,7 +134,7 @@ export default {
     const start_date_v = ref(props.start_date || new Date().toISOString().split('T')[0]);
     const selectedMeals = ref(['lunch']);
     const generation_mode = ref('auto');
-    const calorieValue = ref(2000);
+    //const calorieValue = ref(2000);
     const meatPercentage = ref(50);
     const noRepeatDays = ref(0);
     
@@ -201,45 +201,49 @@ export default {
       selectedRecipes[dayIndex][meal] = '';
     }
 
-    async function submitForm() {
-      const payload = {
-        generation_mode: generation_mode.value,
-        start_date: start_date_v.value,
-        days: parseInt(selectedPeriod.value),
-        meals: selectedMeals.value,
-        no_repeat_days: noRepeatDays.value,
-        calories: calorieValue.value,
-        meat_percentage: meatPercentage.value,
-        selections: generation_mode.value === 'manual' ? Object.entries(selectedRecipes).reduce((acc, [dayIndex, meals]) => {
-          acc[dayIndex] = Object.entries(meals).reduce((mealAcc, [meal, recipeId]) => {
-            if (recipeId) {
-              mealAcc[meal] = {
-                category_id: selectedCategories[dayIndex][meal] || null,
-                recipe_id: recipeId
-              };
-            }
-            return mealAcc;
-          }, {});
-          return acc;
-        }, {}) : {}
-      };
-
-      try {
-        const response = await axios.post(route('plans.store', {}, Ziggy), payload);
-        console.log(payload);
-        
-        alert('Jedálniček bol úspešne odoslaný!');
-        console.log('Response:', response.data);
-      } catch (error) {
-        console.error('Chyba pri odosielaní:', error);
-          if (error.response) {
-            console.error('Response data:', error.response.data);
-            alert('Nastala chyba: ' + JSON.stringify(error.response.data));
-          } else {
-            alert('Nastala neznáma chyba pri odosielaní jedálnička.');
+  async function submitForm() {
+    const payload = {
+      generation_mode: generation_mode.value,
+      start_date: start_date_v.value,
+      days: parseInt(selectedPeriod.value),
+      meals: selectedMeals.value,
+      no_repeat_days: noRepeatDays.value,
+      //calories: calorieValue.value,
+      meat_percentage: meatPercentage.value,
+      selections: generation_mode.value === 'manual' ? Object.entries(selectedRecipes).reduce((acc, [dayIndex, meals]) => {
+        acc[dayIndex] = Object.entries(meals).reduce((mealAcc, [meal, recipeId]) => {
+          if (recipeId) {
+            mealAcc[meal] = {
+              category_id: selectedCategories[dayIndex][meal] || null,
+              recipe_id: recipeId
+            };
           }
+          return mealAcc;
+        }, {});
+        return acc;
+      }, {}) : {}
+    };
+
+    try {
+      const response = await axios.post(route('plans.store', {}, Ziggy), payload, {
+        headers: {
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+      });
+      console.log(payload);
+      
+      alert('Jedálniček bol úspešne odoslaný!');
+      console.log('Response:', response.data);
+    } catch (error) {
+      console.error('Chyba pri odosielaní:', error);
+      if (error.response) {
+        console.error('Response data:', error.response.data);
+        alert('Nastala chyba: ' + JSON.stringify(error.response.data));
+      } else {
+        alert('Nastala neznáma chyba pri odosielaní jedálnička.');
       }
     }
+  }
 
     initializeSelections();
     watch(selectedPeriod, initializeSelections);
@@ -249,7 +253,7 @@ export default {
       start_date_v,
       selectedMeals,
       generation_mode,
-      calorieValue,
+      //calorieValue,
       meatPercentage,
       noRepeatDays,
       selectedCategories,

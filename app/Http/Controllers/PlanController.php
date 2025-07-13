@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AiClassifier;
 use App\Models\Plan;
+use App\Models\PlanRecipe;
 use App\Models\Recipe;
 use App\Models\RecipeCategory;
 use Carbon\Carbon;
@@ -21,7 +23,7 @@ class PlanController extends Controller
 {
   public function index()
   {
-    $plans = Plan::with('recipes')->get();
+    $plans = Plan::with('recipes')->where('user_id', Auth::id())->get();
     $recipes = Recipe::all();
     $recipe_categories = RecipeCategory::where('is_active', true)->get();
     $today = now()->format('Y-m-d');
@@ -35,7 +37,7 @@ class PlanController extends Controller
   }
 
   public function store(Request $request)
-    {
+  {
         // Validácia vstupných údajov
         $validator = Validator::make($request->all(), [
             'generation_mode' => 'required|in:auto,manual',
@@ -46,8 +48,8 @@ class PlanController extends Controller
             'no_repeat_days' => 'integer|min:0|max:30',
             'calories' => 'integer|min:1200|max:3500',
             'meat_percentage' => 'integer|min:0|max:100',
-            'selections' => 'required_if:generation_mode,manual|array',
-            'selections.*.*.category_id' => 'nullable|exists:categories,id',
+            'selections' => 'required_if:generation_mode,manual|array|nullable',
+            'selections.*.*.category_id' => 'nullable|exists:recipe_categories,id',
             'selections.*.*.recipe_id' => 'nullable|exists:recipes,id',
         ]);
 
@@ -68,8 +70,8 @@ class PlanController extends Controller
             'days' => $request->days,
             'date_start'  => $date_start,
             'date_stop'   => $date_start->copy()->addDays($days)->toDateString(),
-            'calories' => $request->calories,
-            'meat_percentage' => $request->meat_percentage,
+            /*'calories' => $request->calories,
+            'meat_percentage' => $request->meat_percentage,*/
           ]);
 
           if($request->generation_mode == 'manual'){
@@ -80,14 +82,113 @@ class PlanController extends Controller
                   $recipe_id   = $selections[$index][$meal]['recipe_id'];
                   $category_id = $selections[$index][$meal]['category_id']; 
 
-                  $plan->recipes()->create([
+                 PlanRecipe::create([
                   'plan_id'     => $plan->id,
                   'recipe_id'   => $recipe_id,
+                  'user_id'     => Auth::id(),
                   'category_id' => $category_id,
                   'date'        => $date_start->copy()->addDays($index)->toDateString(),
                   'food_type'   => $meal,
                 ]);
                 }
+              }
+            }
+
+            # return with Jedálniček bol úspešne vytvorený
+
+          } else {
+            $lastRecipes = [];
+            if ((int)$request->no_repeat_days > 0) {
+              $now = Carbon::now()->endOfDay();
+              $dateFrom = Carbon::now()->subDays($request->no_repeat_days)->startOfDay();
+
+              $lastRecipes = PlanRecipe::whereBetween('date', [$dateFrom, $now])
+                  //->where('user_id', Auth::id())
+                  ->pluck('recipe_id')
+                  ->toArray();
+            }
+
+            $fetchRecipes = function ($foodType) use ($lastRecipes, $days) {
+              return Recipe::where('food_type', $foodType)
+                  ->whereNotIn('id', $lastRecipes)
+                  //->where('user_id', Auth::id()) 
+                  ->inRandomOrder()
+                  ->limit($days)
+                  ->get()
+                  ->toArray();
+            };
+
+            $breakfasts = in_array('breakfast', $request->meals) ? $fetchRecipes('breakfast') : collect([]);
+            $lunches    = in_array('lunch', $request->meals) ? $fetchRecipes('lunch') : collect([]);
+            $dinners    = in_array('dinner', $request->meals) ? $fetchRecipes('dinner') : collect([]);
+
+            if(isset($request->calories)){
+              # todo - ak ma uzivatel opravnenie na kalorie, tak si musi nastavit kolko percent kalorii ma na ktore jedlo 
+               $dailyCalories = $request->calories;
+               $distribution = [ # todo - nastavenie počtu kalorii len ak bude jedalniček pre všetky 3 jedlá?
+                'breakfast' => 0.25,
+                'lunch' => 0.35,
+                'dinner' => 0.30,
+                ];
+
+              for ($i = 0; $i < $days; $i++) {
+                foreach ($distribution as $meal => $ratio) {
+                  $targetCalories = round($dailyCalories * $ratio);
+                  $recipe = AiClassifier::getRecipeByCalories($meal, $targetCalories);
+
+                  if ($recipe) {
+                    PlanRecipe::create([
+                      'plan_id'     => $plan->id,
+                      'recipe_id'   => $recipe->id,
+                      'category_id' => $recipe->category,
+                      'user_id'     => Auth::id(),
+                      'date'        => $date_start->copy()->addDays($i)->toDateString(),
+                      'food_type'   => $meal,
+                    ]);
+                  } else {
+                    # Nepodarilo sa najst recept. Pridajte recept alebo zvyste odchylku
+                  }
+                }
+              }
+
+            } else {
+              if(count($breakfasts) > 0 || count($lunches) > 0 || count($dinners) > 0){
+                for($i = 0; $i < $days; $i++){
+                  if(count($breakfasts) > 0){
+                      PlanRecipe::create([
+                      'plan_id'     => $plan->id,
+                      'recipe_id'   => $breakfasts[$i]['id'],
+                      'category_id' => $breakfasts[$i]['category_id'],
+                      'user_id'     => Auth::id(),
+                      'date'        => $date_start->copy()->addDays($i + 1)->toDateString(),
+                      'food_type'   => 'breakfast',
+                    ]);
+                  }
+
+                  if(count($lunches) > 0){
+                      PlanRecipe::create([
+                      'plan_id'     => $plan->id,
+                      'recipe_id'   => $lunches[$i]['id'],
+                      'category_id' => $lunches[$i]['category_id'],
+                      'user_id'     => Auth::id(),
+                      'date'        => $date_start->copy()->addDays($i + 1)->toDateString(),
+                      'food_type'   => 'lunch',
+                    ]);
+                  }
+
+                  if(count($dinners) > 0){
+                      PlanRecipe::create([
+                      'plan_id'     => $plan->id,
+                      'recipe_id'   => $dinners[$i]['id'],
+                      'category_id' => $dinners[$i]['category_id'],
+                      'user_id'     => Auth::id(),
+                      'date'        => $date_start->copy()->addDays($i + 1)->toDateString(),
+                      'food_type'   => 'dinner',
+                    ]);
+                  }
+                }
+              } else {
+                # Nepodarilo sa najst ziadne recepty 
               }
             }
           }

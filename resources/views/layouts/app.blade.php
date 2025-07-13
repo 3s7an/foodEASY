@@ -11,6 +11,7 @@
     @routes
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
+<meta name="csrf-token" content="{{ csrf_token() }}">
 
 <body style="overflow: hidden; font-family: 'Roboto', sans-serif; background-color: #f8f9fa;">
     <nav class="navbar navbar-expand-lg shadow-lg fixed-top" style="background: linear-gradient(to right, #d2a00f, #e9b61d); z-index: 1030; height: 50px;">
