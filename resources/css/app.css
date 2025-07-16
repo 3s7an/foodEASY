@@ -117,4 +117,52 @@ footer {
     background-color: #b88f12;
     color: #fff;
   }
+
+select.form-select {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 1rem;
+  color: #333;
+  background-color: #fff;
+  border: 1.5px solid #ccc;
+  border-radius: 8px;
+  appearance: none; 
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  position: relative;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+select.form-select {
+  background-image: url('data:image/svg+xml;utf8,<svg fill="gray" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px 16px;
+}
+
+select.form-select:hover,
+select.form-select:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 6px rgba(0, 123, 255, 0.5);
+  outline: none;
+  background-color: #fff;
+}
+
+select.form-select[multiple] {
+  padding-right: 12px;
+  height: auto;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+select.form-select option {
+  padding: 8px;
+  font-size: 1rem;
+}
+
   

@@ -14,7 +14,7 @@ class RecipeItemSeeder extends Seeder
      */
     public function run(): void
     {
-        $recipes = Recipe::factory(20)->create(); 
+        $recipes = Recipe::factory(100)->create(); 
 
         foreach ($recipes as $recipe) {
             

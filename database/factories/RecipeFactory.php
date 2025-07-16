@@ -27,6 +27,7 @@ class RecipeFactory extends Factory
         return [
             'name'          => $this->faker->word,
             'category_id'   => rand(1, 9),
+            'food_type'     => $this->faker->randomElement(['breakfast', 'lunch', 'dinner']),
             'created_user'  => 1
         ];
     }

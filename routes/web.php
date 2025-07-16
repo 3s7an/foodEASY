@@ -29,15 +29,7 @@ Route::delete('/recipes/items/{recipe_item_id}', [RecipeController::class, 'item
 
 
 /* Stravovací plán */
-Route::resource('plans', PlanController::class)->names([
-    'index' => 'plans.index',
-    'create' => 'plans.create',
-    'store' => 'plans.store',
-    'show' => 'plans.view',
-    'edit' => 'plans.edit',
-    'update' => 'plans.update',
-    'destroy' => 'plans.delete',
-]);
+
 
 Auth::routes();
 

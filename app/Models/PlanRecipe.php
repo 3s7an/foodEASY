@@ -14,6 +14,7 @@ class PlanRecipe extends Pivot
     'recipe_id',
     'category_id',
     'date',
+    'user_id',
     'food_type',
   ];
 

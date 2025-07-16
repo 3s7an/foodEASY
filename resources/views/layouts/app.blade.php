@@ -13,6 +13,22 @@
 </head>
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
+@if (session('success'))
+  <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+    {{ session('success') }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Zavrieť"></button>
+  </div>
+@endif
+
+@if(session('status') === 'error')
+  <div class="alert alert-danger">
+    @foreach ($errors->all() as $error)
+      <div>{{ $error }}</div>
+    @endforeach
+  </div>
+@endif
+
+
 <body style="overflow: hidden; font-family: 'Roboto', sans-serif; background-color: #f8f9fa;">
     <nav class="navbar navbar-expand-lg shadow-lg fixed-top" style="background: linear-gradient(to right, #d2a00f, #e9b61d); z-index: 1030; height: 50px;">
         <div class="container-fluid px-4">
