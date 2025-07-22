@@ -1,19 +1,16 @@
 @extends('layouts.app')
 
 @section('title', 'Domov')
-
 @section('content')
     <div class="container-fluid px-5" style="max-width: 60%; margin: 0 auto;">
         <div class="text-center mb-4">
             <h1 class="fw-bold text-dark mb-4 text-center" style="font-size: 3.5rem;">{{ $recipe->name }}</h1>
         </div>
-
         <!-- Obrazok  -->
         <div class="card shadow-sm border-0 h-100 mb-4">
             <div class="card-body text-center p-0">
-                @if ($recipe->get_image_url())
-                    <img src="{{ $recipe->get_image_url() }}" alt="Obrázok receptu" class="img-fluid w-100"
-                        style="object-fit: cover; max-height: 500px;">
+                @if ($recipe->getFirstMediaUrl('images'))
+                    <img src="{{ $recipe->getFirstMediaUrl('images')}}" alt="Obrázok receptu" />
                 @else
                     <form action="{{ route('recipe.upload_image', $recipe->id) }}" method="POST"
                         enctype="multipart/form-data" class="d-flex flex-column align-items-md-end gap-3">

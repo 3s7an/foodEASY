@@ -34,6 +34,7 @@
             </h5>
             <div class="d-flex justify-content-between align-items-center mt-auto">
               <div class="d-flex gap-2">
+                <img :src="recipe.image_url" alt="Obrázok receptu" />
                 <a :href="`/recipes/${recipe.id}`" class="btn btn-sm btn-outline-dark" title="Zobraziť detail">
                   <i class="fas fa-eye"></i>
                 </a>

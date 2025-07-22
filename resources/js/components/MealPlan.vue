@@ -56,7 +56,7 @@
         <small class="form-text text-muted">Podrž Ctrl (Cmd) alebo Shift pre výber viacerých kategórií.</small>
       </div>
       <div class="col-md-1"></div>
-      <div class="col-md-6">
+      <!-- <div class="col-md-6">
         <div class="form-check form-check-inline">
           <input class="form-check-input" type="checkbox" id="show_calories" v-model="show_calories" />
           <label class="form-check-label" for="show_calories">Nastaviť denný kalorický limit</label>
@@ -65,7 +65,7 @@
           <label for="calories" class="form-label"><i class="bi bi-fire me-2"></i>Denný kalorický limit: <span class="range-value">{{ calorieValue }}</span> kcal</label>
           <input type="range" class="form-range" id="calories" min="1200" max="3500" step="50" v-model.number="calorieValue" />
         </div>
-      </div>
+      </div> -->
     </div>
 
     <!-- Manuálny režim -->
@@ -140,12 +140,12 @@ const show_calories = ref(false)
 const categoriesAuto = ref([])
 const selectedCategories = reactive({})
 const selectedRecipes = reactive({})
-const errors = ref({}) // <-- tu uchovávame chyby
+const errors = ref({}) 
 
 const periodDays = computed(() => Array.from({ length: parseInt(selectedPeriod.value) || 0 }))
 const mealLabels = {
   breakfast: 'Raňajky',
-  snack1: 'Desiata',
+  // snack1: 'Desiata',
   lunch: 'Obed',
   snack2: 'Olovrant',
   dinner: 'Večera',
@@ -165,7 +165,7 @@ function initializeSelections() {
     })
   })
 
-  errors.value = {} // reset chyby pri preinicializácii
+  errors.value = {} 
 }
 
 function updateMealSelections() {
@@ -200,10 +200,7 @@ function handleCategoryChange(dayIndex, meal) {
 }
 
 async function submitForm() {
-  errors.value = {}; // reset chýb pred submitom
-
-  const cleanSelectedRecipes = JSON.parse(JSON.stringify(selectedRecipes));
-  const cleanSelectedCategories = JSON.parse(JSON.stringify(selectedCategories));
+  errors.value = {}
 
   const payload = {
     generation_mode: generation_mode.value,
@@ -213,38 +210,61 @@ async function submitForm() {
     auto_categories: generation_mode.value === 'auto' ? categoriesAuto.value : [],
     calorie_limit: show_calories.value ? calorieValue.value : null,
     no_repeat_days: noRepeatDays.value,
-    selections: generation_mode.value === 'manual' ? cleanSelectedCategories : {}
-  };
+    selections: {}
+  }
 
   if (generation_mode.value === 'manual') {
-    payload.selections = {};
+    let hasError = false
+    const newErrors = {}
+
     periodDays.value.forEach((_, dayIndex) => {
-      payload.selections[dayIndex] = {};
+      payload.selections[dayIndex] = {} 
+
       selectedMeals.value.forEach(meal => {
+        const category = selectedCategories[dayIndex]?.[meal]
+        const recipe = selectedRecipes[dayIndex]?.[meal]
+
+        if (!category) {
+          hasError = true
+          newErrors[`selections.${dayIndex}.${meal}.category_id`] = ['Pole je povinné.']
+        }
+
+        if (!recipe) {
+          hasError = true
+          newErrors[`selections.${dayIndex}.${meal}.recipe_id`] = ['Pole je povinné.']
+        }
+
         payload.selections[dayIndex][meal] = {
-          category_id: selectedCategories[dayIndex][meal],
-          recipe_id: selectedRecipes[dayIndex][meal]
-        };
-      });
-    });
+          category_id: category,
+          recipe_id: recipe
+        }
+      })
+    })
+
+    if (hasError) {
+      errors.value = newErrors
+      flash.message = 'Prosím, vyplň všetky polia v manuálnom režime.'
+      flash.type = 'danger'
+      return
+    }
   }
 
   try {
     const response = await axios.post(route('plans.store'), payload)
-    flash.message = 'Menu bolo úspešne uložené.'
-    flash.type = 'success'
-    window.location.reload()
+    flash.message = response.data.message
+    flash.type = response.data.status
   } catch (error) {
     if (error.response?.status === 422) {
       errors.value = error.response.data.errors || {}
-      flash.message = 'Prosím opravte chyby vo formulári.'
+      flash.message = reponse.data.message
       flash.type = 'danger'
     } else {
-      flash.message = 'Nastala chyba pri ukladaní.'
+      flash.message = response.data.message
       flash.type = 'danger'
     }
   }
 }
+
 
 watch([selectedPeriod, selectedMeals], () => {
   initializeSelections()

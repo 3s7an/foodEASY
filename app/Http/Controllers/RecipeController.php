@@ -31,9 +31,18 @@ class RecipeController extends Controller
     } 
 
     /* BACKEND */
-     $recipes = Cache::remember('recipes_w_items', 15, function() {
-      return Recipe::with('recipe_items')->get(); 
+    $recipes = Recipe::all()->map(function ($recipe) {
+      return [
+        'id' => $recipe->id,
+        'name' => $recipe->name,
+        'image_url' => $recipe->hasMedia('images')
+            ? $recipe->getFirstMediaUrl('images')
+            : '/images/no-image.png',
+        ];
     });
+
+
+    // dd($recipes);
 
     $shoppingLists = ShoppingList::with('products')->get();
 
@@ -97,8 +106,6 @@ class RecipeController extends Controller
 
     Cache::forget('recipes_w_items');
 
-    /* TODO - po vytvoreni receptu sa presmeruje priamo na show view daneho receptu, zistit ako posielat práve vytvorené idčko */
-
     return redirect()->route('recipes.index');
   }
 
@@ -114,10 +121,7 @@ class RecipeController extends Controller
 
     $product_name = AiClassifier::translateProductName($product_name);
 
-
-
     $data = AiClassifier::getNutrients($product_name, $amount);
-
 
     if($data != null){
       RecipeItem::create([
@@ -179,18 +183,9 @@ class RecipeController extends Controller
       return redirect()->back()->with('error', 'Recept nebol nájdený.');
     }
 
-    if ($request->hasFile('image')) {
-      $file = $request->file('image');
-      $fileName = time() . '.' . $file->getClientOriginalExtension();
-      $file->storeAs('images', $fileName, 'public');
+    $recipe->addMedia($request->file('image'))->toMediaCollection('images');
 
-        
-      $recipe->update([
-        'image' => 'images/' . $fileName
-      ]);
-
-        return redirect()->back()->with('success', 'Obrázok bol úspešne nahraný!');
-    }
+    return redirect()->back()->with('success', 'Obrázok bol úspešne nahraný!');
   }
 
   public function procedure_store(Request $request, $recipe_id){

@@ -51,7 +51,6 @@ class AiClassifier extends Model
     $deepLUrl = 'https://api-free.deepl.com/v2/translate';
     $deepLKey = env('DEEPL_API_KEY');
 
-
     Log::info("Preparing DeepL request: URL=$deepLUrl, Key=$deepLKey, ProductName=$productName");
 
     try {
@@ -197,7 +196,8 @@ class AiClassifier extends Model
 
       ];
     } catch (\Exception $e) {
-      return null;
+      Log::error('Nepodarilo sa získať údaje: ' . $e->getMessage());
+
     }
   }
 

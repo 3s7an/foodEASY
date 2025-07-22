@@ -10,6 +10,7 @@ use App\Models\RecipeCategory;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
@@ -45,19 +46,17 @@ class PlanController extends Controller
       'meals.*' => 'in:breakfast,lunch,dinner',
       'no_repeat_days' => 'nullable|integer|min:0|max:30',
       'auto_categories' => 'nullable|array',
-      'selections' => 'required_if:generation_mode,manual|array|min:1',
-      'selections.*' => 'required|array|min:1', 
+      /*'selections' => 'required_if:generation_mode,manual|array|min:1',
+      'selections.*' => 'required_if:generation_mode,manual|array', 
       'selections.*.*.category_id' => 'required_if:generation_mode,manual|exists:recipe_categories,id',
-      'selections.*.*.recipe_id' => 'required_if:generation_mode,manual|exists:recipes,id',
+      'selections.*.*.recipe_id' => 'required_if:generation_mode,manual|exists:recipes,id',*/
       'calories' => 'nullable|integer|min:1',
     ]);
 
 
     if ($validator->fails()) {
-    return response()->json([
-        'errors' => $validator->errors()
-    ], 422);
-}
+      return response()->json(['errors' => $validator->errors()], 422);
+    } 
 
     return DB::transaction(function () use ($request) {
       $date_start = Carbon::parse($request->start_date);
@@ -84,12 +83,12 @@ class PlanController extends Controller
               $category_id = $selections[$index][$meal]['category_id'];
 
               PlanRecipe::create([
-                  'plan_id' => $plan->id,
-                  'recipe_id' => $recipe_id,
-                  'user_id' => Auth::id(),
-                  'category_id' => $category_id,
-                  'date' => $date_start->copy()->addDays($index)->toDateString(),
-                  'food_type' => $meal,
+                'plan_id' => $plan->id,
+                'recipe_id' => $recipe_id,
+                'user_id' => Auth::id(),
+                'category_id' => $category_id,
+                'date' => $date_start->copy()->addDays($index)->toDateString(),
+                'food_type' => $meal,
               ]);
             }
           }
@@ -101,7 +100,6 @@ class PlanController extends Controller
         ]);
       }
 
-      # AUTO MODE
       $lastRecipes = [];
       if ((int) $request->no_repeat_days > 0) {
         $now = Carbon::now()->endOfDay();
@@ -130,57 +128,31 @@ class PlanController extends Controller
       $lunches    = in_array('lunch', $meals) ? $fetchRecipes('lunch') : [];
       $dinners    = in_array('dinner', $meals) ? $fetchRecipes('dinner') : [];
 
-      if (!empty($request->calories)) {
-        $dailyCalories = $request->calories;
-        $distribution = [
-            'breakfast' => 0.25,
-            'lunch' => 0.35,
-            'dinner' => 0.30,
-        ];
+      for ($i = 0; $i < $days; $i++) {
+        foreach (['breakfast' => $breakfasts, 'lunch' => $lunches, 'dinner' => $dinners] as $meal => $recipes) {
+          if (in_array($meal, $meals)) {
+            if (count($recipes) < $days) {
+              $meal_sk = match ($meal) {
+                'breakfast' => 'raňajky',
+                'lunch'     => 'obed',
+                'dinner'    => 'večera',
+                default     => '',
+              };
 
-        for ($i = 0; $i < $days; $i++) {
-          foreach ($distribution as $meal => $ratio) {
-            $targetCalories = round($dailyCalories * $ratio);
-            $recipe = AiClassifier::getRecipeByCalories($meal, $targetCalories);
-
-            if ($recipe) {
-              PlanRecipe::create([
-                'plan_id' => $plan->id,
-                'recipe_id' => $recipe->id,
-                'category_id' => $recipe->category,
-                'user_id' => Auth::id(),
-                'date' => $date_start->copy()->addDays($i)->toDateString(),
-                'food_type' => $meal,
-              ]);
-            } else {
-              return response()->json([
-                'message' => 'Nepodarilo sa nájsť recept pre '.$meal.' s počtom kalórií '.$targetCalories,
-                'status' => 'error'
-              ], 422);
+              throw new HttpResponseException(response()->json([
+                  'message' => "Nemáte dostatok receptov pre {$meal_sk}. Potrebujete $days, máte ".count($recipes),
+                  'status' => 'error'
+              ], 422));
             }
-          }
-        }
-      } else {
-        for ($i = 0; $i < $days; $i++) {
-          foreach (['breakfast' => $breakfasts, 'lunch' => $lunches, 'dinner' => $dinners] as $meal => $recipes) {
-            if (in_array($meal, $meals)) {
 
-              if (count($recipes) < $days) {
-                return response()->json([
-                    'message' => "Nemáte dostatok receptov pre {$meal}. Potrebujete $days, máte " . count($recipes),
-                    'status' => 'error'
-                ], 422);
-              }
-
-              PlanRecipe::create([
-                'plan_id' => $plan->id,
-                'recipe_id' => $recipes[$i]['id'],
-                'category_id' => $recipes[$i]['category_id'],
-                'user_id' => Auth::id(),
-                'date' => $date_start->copy()->addDays($i)->toDateString(),
-                'food_type' => $meal,
-              ]);
-            }
+            PlanRecipe::create([
+              'plan_id' => $plan->id,
+              'recipe_id' => $recipes[$i]['id'],
+              'category_id' => $recipes[$i]['category_id'],
+              'user_id' => Auth::id(),
+              'date' => $date_start->copy()->addDays($i)->toDateString(),
+              'food_type' => $meal,
+            ]);
           }
         }
       }

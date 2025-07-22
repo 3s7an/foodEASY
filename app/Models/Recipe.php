@@ -4,12 +4,21 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
-class Recipe extends Model
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+class Recipe extends Model implements HasMedia
 {
   use HasFactory;
+  use InteractsWithMedia;
 
-  protected $fillable = ['name', 'time', 'image', 'food_type', 'category_id', 'calories', 'created_user'];
+  protected $fillable = ['name', 'time', 'food_type', 'category_id', 'calories', 'created_user'];
+
+  protected $appends = ['image_url'];
+
+  public function getImageUrlAttribute(){
+      return $this->getFirstMediaUrl('images');
+  }
+
 
   public function recipe_items()
   {
@@ -28,13 +37,17 @@ class Recipe extends Model
       ->using(PlanRecipe::class);
   }
 
-
-
-  public function get_image_url()
-  {
-    if ($this->image) {
-      return url('storage/' . $this->image);
-    }
-    return null;
+  public function registerMediaCollections(): void{
+    $this->addMediaCollection('images')->singleFile();
   }
+
+
+
+  // public function get_image_url()
+  // {
+  //   if ($this->image) {
+  //     return url('storage/' . $this->image);
+  //   }
+  //   return null;
+  // }
 }
