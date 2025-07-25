@@ -13,21 +13,6 @@
 </head>
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
-@if (session('success'))
-  <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
-    {{ session('success') }}
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Zavrieť"></button>
-  </div>
-@endif
-
-@if(session('status') === 'error')
-  <div class="alert alert-danger">
-    @foreach ($errors->all() as $error)
-      <div>{{ $error }}</div>
-    @endforeach
-  </div>
-@endif
-
 
 <body style="overflow: hidden; font-family: 'Roboto', sans-serif; background-color: #f8f9fa;">
     <nav class="navbar navbar-expand-lg shadow-lg fixed-top" style="background: linear-gradient(to right, #d2a00f, #e9b61d); z-index: 1030; height: 50px;">
@@ -86,13 +71,30 @@
     
     <aside class="position-fixed bg-light border-end d-flex flex-column align-items-start py-4 px-3"
         style="top: 50px; left: 0; height: calc(100vh - 70px); width: 120px; z-index: 1020;">
-        <a href="#" class="sidebar-link mb-3"><i class="fas fa-home me-2 text-decoration-none"></i> Domov</a>
+        <a href="{{route('home')}}" class="sidebar-link mb-3"><i class="fas fa-home me-2 text-decoration-none"></i> Domov</a>
         <a href="{{ route('recipes.index') }}" class="sidebar-link mb-3 {{ request()->routeIs('recipes.index') ? 'active' : '' }} text-decoration-none"><i class="fas fa-book me-2"></i> Recepty</a>
         <a href="{{ route('plans.index') }}" class="sidebar-link mb-3 {{ request()->routeIs('plans.index') ? 'active' : '' }} text-decoration-none"><i class="fas fa-calendar-alt me-2"></i> Plány</a>
     </aside>
 
+
     <!-- Content -->
     <main style="margin-top: 70px; margin-left: 140px; height: calc(100vh - 70px); overflow-y: auto;">
+        
+    @if (session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Zavrieť"></button>
+        </div>
+        @endif
+
+        @if(session('status') === 'error')
+        <div class="alert alert-danger">
+            @foreach ($errors->all() as $error)
+            <div>{{ $error }}</div>
+            @endforeach
+        </div>
+    @endif
+
         <div id="app" class="container py-4">
             @yield('content')
         </div>

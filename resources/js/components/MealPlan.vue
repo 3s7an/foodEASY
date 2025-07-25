@@ -253,6 +253,7 @@ async function submitForm() {
     const response = await axios.post(route('plans.store'), payload)
     flash.message = response.data.message
     flash.type = response.data.status
+    window.location.reload();
   } catch (error) {
     if (error.response?.status === 422) {
       errors.value = error.response.data.errors || {}

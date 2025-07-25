@@ -23,15 +23,19 @@ class RecipeController extends Controller
     /* AJAX */
     if ($request->wantsJson()) {
       if($request->filter == 'mine' && FacadesAuth::check()){
-        $recipes = Recipe::with('recipe_items')->where('created_user', FacadesAuth::id())->get();
+        $recipes = Recipe::with('recipe_items')->where('created_user', FacadesAuth::id())->orderBy('created_at', 'desc')->get();
+      } elseif($request->filter == 'newest') {
+        $recipes = Recipe::with('recipe_items')->orderBy('created_at', 'desc')->get(); 
+      } elseif($request->filter == 'oldest'){
+        $recipes = Recipe::with('recipe_items')->orderBy('created_at', 'asc')->get();
       } else {
-        $recipes = Recipe::with('recipe_items')->get(); 
+        $recipes = Recipe::with('recipe_items')->get();
       }
         return response()->json($recipes);
     } 
 
     /* BACKEND */
-    $recipes = Recipe::all()->map(function ($recipe) {
+    $recipes = Recipe::orderBy('created_at', 'asc')->get()->map(function ($recipe) {
       return [
         'id' => $recipe->id,
         'name' => $recipe->name,
@@ -95,19 +99,45 @@ class RecipeController extends Controller
   }
 
 
-  public function store(Request $request){
-    $request->validate([
-      'name'   => 'required|min:3|max:255'
+ public function create(Request $request){
+    $data = $request->validate([
+        'name' => 'required|string|max:100',
+        'items' => 'required|array',
+        'steps' => 'required|array',
     ]);
-  
+
+    // dd($data);
+
     $recipe = Recipe::create([
-      'name'  => $request->name
+      'name' => $data['name'],
+      'created_user' => FacadesAuth::id() ?? '21', 
     ]);
 
-    Cache::forget('recipes_w_items');
+    foreach ($data['items'] as $item) {
+      RecipeItem::create([
+        'recipe_id' => $recipe->id,
+        'name' => $item['name'],
+        'weight' => $item['weight'],
+        'weight_cooked' => $item['weight_cooked'],
+        'weight_unit' => $item['unit'],
+        'calories' => $item['calories'],
+        'fat' => $item['fat'],
+        'saturated_fat' => $item['saturated_fat'],
+        'cholesterol' => $item['cholesterol'],
+        'total_carbohydrate' => $item['total_carbohydrate'],
+        'sugar' => $item['sugar'],
+        'protein' => $item['protein'],
+        'image' => $item['image'] ?? '',
+      ]);
+    }
 
-    return redirect()->route('recipes.index');
+    foreach ($data['steps'] as $step) {
+        $recipe->procedures()->create(['name' => $step]);
+    }
+
+    return response()->json(['success' => true, 'id' => $recipe->id]);
   }
+
 
   public function item_store(Request $request, $recipeId){
     $request->validate([
@@ -143,6 +173,47 @@ class RecipeController extends Controller
 
     return redirect()->route('recipes.show', $recipeId)->with('success', 'Recept bol pridaný!');
   }
+
+  public function get_nutrients(Request $request){
+    $request->validate([
+        'name'        => 'required|min:3|max:40',
+        'amount'      => 'required|integer',
+        'amount_unit' => 'required'
+    ]);
+
+    $translated = AiClassifier::translateProductName($request->name);
+    $data = AiClassifier::getNutrients($translated, $request->amount);
+
+    if($data != null){
+      $nutrients = [
+        'name'                => $request->name,
+        'weight'              => $data['weight'],
+        'weight_cooked'       => $data['weight_cooked'],
+        'weight_unit'         => $request->amount_unit,
+        'calories'            => $data['calories'],
+        'fat'                 => $data['fat'],
+        'saturated_fat'       => $data['saturated_fat'],
+        'cholesterol'         => $data['cholesterol'],
+        'total_carbohydrate'  => $data['total_carbohydrate'],
+        'sugar'               => $data['sugar'],
+        'protein'             => $data['protein'],
+        'image'               => $data['image'] ?? '',
+      ];
+    }
+
+    if (!$nutrients) {
+      return response()->json([
+          'success' => false,
+          'message' => 'Výživové hodnoty sa nepodarilo získať.'
+      ], 404);
+    }
+
+    return response()->json([
+      'success' => true,
+      'nutrients' => $nutrients
+    ]);
+  }
+
 
   public function add_to_list(Request $request){
     

@@ -5,9 +5,9 @@
 @section('content')
 <div class="container mt-4">
     <div class="d-flex align-items-center justify-content-between">
-        <h1 class="fw-bold text-center">Stravovacie plány</h1>
+        <h1 class="fw-bold text-center">Jedálničky</h1>
         <button type="button" class="btn btn-secondary" @click="openNewPlanModal">
-            Nový stravovací plán
+            Nový jedálniček
             <i class="fas fa-plus fa-xs ms-1"></i>
         </button>
     </div>

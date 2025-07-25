@@ -26,6 +26,10 @@ Route::post('recipes/{recipe_id}/upload-image', [RecipeController::class, 'uploa
 Route::post('recipes/{reciped_id}/procedure/store', [RecipeController::class, 'procedure_store'])->name('recipe.procedure_store');
 Route::delete('/recipes/{recipe_id}', [RecipeController::class, 'destroy'])->name('recipes.destroy');
 Route::delete('/recipes/items/{recipe_item_id}', [RecipeController::class, 'item_destroy'])->name('recipes_item.destroy');
+Route::post('/recipes/get-nutrients', [RecipeController::class, 'get_nutrients'])->name('recipe.get_nutrients');
+Route::post('/recipes/create', [RecipeController::class, 'create'])->name('recipes.create');
+
+
 
 
 /* Stravovací plán */

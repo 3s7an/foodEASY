@@ -8,21 +8,26 @@
         </div>
         <!-- Obrazok  -->
         <div class="card shadow-sm border-0 h-100 mb-4">
-            <div class="card-body text-center p-0">
+            <div class="card-body d-flex justify-content-center align-items-center p-4" style="min-height: 300px;">
                 @if ($recipe->getFirstMediaUrl('images'))
-                    <img src="{{ $recipe->getFirstMediaUrl('images')}}" alt="Obrázok receptu" />
+                <img 
+                    src="{{ $recipe->getFirstMediaUrl('images') }}" 
+                    alt="Obrázok receptu" 
+                    class="img-fluid rounded shadow"
+                    style="max-height: 280px; object-fit: cover;"
+                />
                 @else
-                    <form action="{{ route('recipe.upload_image', $recipe->id) }}" method="POST"
-                        enctype="multipart/form-data" class="d-flex flex-column align-items-md-end gap-3">
-                        @csrf
-                        <div class="d-flex align-items-center justify-content-center">
-                            <input type="file" name="image" class="form-control form-control-sm" accept="image/*">
-                            <button type="submit" class="btn btn-primary btn-sm m-4">Nahrať</button>
-                        </div>
-                    </form>
+                <form action="{{ route('recipe.upload_image', $recipe->id) }}" method="POST"
+                        enctype="multipart/form-data" 
+                        class="d-flex flex-column align-items-center gap-3 w-100">
+                    @csrf
+                    <input type="file" name="image" class="form-control form-control-sm w-75" accept="image/*">
+                    <button type="submit" class="btn btn-primary btn-sm">Nahrať</button>
+                </form>
                 @endif
             </div>
         </div>
+
 
         <!-- Polozky receptu -->
         <div class="card shadow-sm border-0 h-100 mb-4">
