@@ -7,7 +7,7 @@
       </button>
     </div>
 
-    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4 mt-4">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
       <nav class="d-flex gap-2">
         <a href="#" @click.prevent="fetchRecipes()" class="btn btn-outline-secondary btn-sm">
           Všetky recepty

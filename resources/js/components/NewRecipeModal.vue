@@ -11,6 +11,17 @@
           <input v-model="recipe.name" type="text" class="form-control" placeholder="Názov receptu">
         </div>
 
+        <!-- Kategória
+        <div class="mb-4">
+          <label for="category" class="form-label">Kategória</label>
+          <select id="category" class="form-select" v-model="recipe.category_id">
+            <option disabled value="">Vyber kategóriu</option>
+            <option v-for="category in categories" :key="category.id" :value="category.id">
+              {{ category.name }}
+            </option>
+          </select>
+        </div> -->
+
         <!-- Ingrediencie -->
         <div class="mb-4">
           <h5>Ingrediencie</h5>
@@ -75,7 +86,11 @@ export default {
     recipeId: {
       type: Number,
       required: true
-    }
+    },
+    // categories: {
+    //   type: Array,
+    //   required: true
+    // }
   },
   components: {
     FlashMessage
@@ -84,6 +99,7 @@ export default {
     return {
       recipe: {
         name: '',
+        // category_id: '', 
         items: [],
         steps: [],
       },

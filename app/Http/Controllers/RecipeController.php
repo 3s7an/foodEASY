@@ -6,6 +6,7 @@ use App\Models\AiClassifier;
 use App\Models\ListCategory;
 use App\Models\Product;
 use App\Models\Recipe;
+use App\Models\RecipeCategory;
 use App\Models\RecipeItem;
 use App\Models\RecipeProcedure;
 use App\Models\ShoppingList;
@@ -19,7 +20,7 @@ use Illuminate\Support\Facades\Log;
 class RecipeController extends Controller
 {
   public function index(Request $request) {
-    
+    // $categories = RecipeCategory::all();
     /* AJAX */
     if ($request->wantsJson()) {
       if($request->filter == 'mine' && FacadesAuth::check()){

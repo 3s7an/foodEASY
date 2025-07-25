@@ -115,7 +115,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, watch } from 'vue'
+import { ref, reactive, computed, watch, nextTick} from 'vue'
 import axios from 'axios'
 import { route } from 'ziggy-js'
 import FlashMessage from './FlashMessage.vue'
@@ -249,6 +249,14 @@ async function submitForm() {
     }
   }
 
+    if (generation_mode.value === 'auto' && (!categoriesAuto.value || categoriesAuto.value.length === 0)) {
+    flash.message = ''  
+    await nextTick()   
+    flash.message = 'V automatickom režime musí byť vybraná aspoň jedna kategória.'
+    flash.type = 'danger'
+    return
+  }
+
   try {
     const response = await axios.post(route('plans.store'), payload)
     flash.message = response.data.message
@@ -257,10 +265,10 @@ async function submitForm() {
   } catch (error) {
     if (error.response?.status === 422) {
       errors.value = error.response.data.errors || {}
-      flash.message = reponse.data.message
+      flash.message = error.response.data.message
       flash.type = 'danger'
     } else {
-      flash.message = response.data.message
+      flash.message = error.response.data.message
       flash.type = 'danger'
     }
   }
