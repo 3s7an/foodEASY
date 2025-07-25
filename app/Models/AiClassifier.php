@@ -86,8 +86,8 @@ class AiClassifier extends Model
   public static function getNutrients($product_name, $product_weight)
   {
     $client = new Client();
-    $appId = env('NUTRITIONIX_APP_ID');
-    $apiKey = env('NUTRITIONIX_API_KEY');
+    $appId = '4137d5b2';
+    $apiKey = '0f835d4a7b5fe2c46c520c2e16d7d4cb';
 
 
     try {
