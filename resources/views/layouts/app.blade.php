@@ -70,10 +70,10 @@
     </nav>
     
     <aside class="position-fixed bg-light border-end d-flex flex-column align-items-start py-4 px-3"
-        style="top: 50px; left: 0; height: calc(100vh - 70px); width: 120px; z-index: 1020;">
+        style="top: 50px; left: 0; height: calc(100vh - 70px); width: 140; z-index: 1020;">
         <a href="{{route('home')}}" class="sidebar-link mb-3"><i class="fas fa-home me-2 text-decoration-none"></i> Domov</a>
         <a href="{{ route('recipes.index') }}" class="sidebar-link mb-3 {{ request()->routeIs('recipes.index') ? 'active' : '' }} text-decoration-none"><i class="fas fa-book me-2"></i> Recepty</a>
-        <a href="{{ route('plans.index') }}" class="sidebar-link mb-3 {{ request()->routeIs('plans.index') ? 'active' : '' }} text-decoration-none"><i class="fas fa-calendar-alt me-2"></i> Plány</a>
+        <a href="{{ route('plans.index') }}" class="sidebar-link mb-3 {{ request()->routeIs('plans.index') ? 'active' : '' }} text-decoration-none"><i class="fas fa-calendar-alt me-2"></i> Jedálničky</a>
     </aside>
 
 

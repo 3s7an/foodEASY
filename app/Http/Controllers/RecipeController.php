@@ -103,7 +103,7 @@ class RecipeController extends Controller
     $data = $request->validate([
         'name' => 'required|string|max:100',
         'items' => 'required|array',
-        'steps' => 'required|array',
+        'steps' => 'array',
     ]);
 
     // dd($data);
@@ -131,8 +131,10 @@ class RecipeController extends Controller
       ]);
     }
 
-    foreach ($data['steps'] as $step) {
+    if(count($data['steps']) > 0){
+      foreach ($data['steps'] as $step) {
         $recipe->procedures()->create(['name' => $step]);
+      }
     }
 
     return response()->json(['success' => true, 'id' => $recipe->id]);
@@ -279,29 +281,36 @@ class RecipeController extends Controller
   }
 
   public function destroy($recipe_id){
-    try{
-      $recipe = Recipe::find($recipe_id);
+    try {
+        $recipe = Recipe::findOrFail($recipe_id);
 
-      if (!$recipe) {
-          return redirect()->back()->with('error', 'Recept nebol nájdený.');
-      }
+        // Odpojenie vzťahu plans, ak existuje
+        $recipe->plans()->detach();
 
-      $recipe->plans()->detach();
+        $recipe->delete();
 
-      $recipe->delete();
+        Cache::forget('recipes_w_items');
 
-      Cache::forget('recipes_w_items');
+        return response()->json([
+            'success' => true,
+            'message' => 'Recept bol úspešne vymazaný.'
+        ], 200);
 
-      return redirect()->route('recipes.index')->with('success', 'Plán bol úspešne vymazaný');
-    
-    } catch(ModelNotFoundException $e){
-      return redirect()->back()->with('error', 'Plán neexistuje.');
-    
-    } catch(\Exception $e){
-      Log::error($e->getMessage());
-      return redirect()->back()->with('error', 'Pri mazaní plánu nastala chyba.');
+    } catch (ModelNotFoundException $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Recept neexistuje.'
+        ], 404);
+
+    } catch (\Exception $e) {
+        Log::error($e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Pri mazaní receptu nastala chyba.'
+        ], 500);
     }
   }
+
 
   public function item_destroy($recipe_item_id){
     try{
