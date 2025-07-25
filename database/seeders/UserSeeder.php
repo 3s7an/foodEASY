@@ -6,6 +6,7 @@ use App\Models\User;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
 {
@@ -16,11 +17,12 @@ class UserSeeder extends Seeder
     {
         $users = User::factory('20')->create();
         
-        User::create([
-            'name'      => 'admin',
-            'email'     => 'admin@gmail.com',
-            'password'  => '11111111'
-        ]);
-
+        User::updateOrCreate(
+        ['email' => 'admin@gmail.com'],
+        [
+            'name' => 'admin',
+            'password' => Hash::make('11111111'),
+        ]
+    );
     }
 }
