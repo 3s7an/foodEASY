@@ -49,7 +49,7 @@ class AiClassifier extends Model
   {
     $client = new Client();
     $deepLUrl = 'https://api-free.deepl.com/v2/translate';
-    $deepLKey = env('DEEPL_API_KEY');
+    $deepLKey = 'a3ba0abd-b8a4-4591-baea-c802cd447797:fx';
 
     Log::info("Preparing DeepL request: URL=$deepLUrl, Key=$deepLKey, ProductName=$productName");
 
@@ -88,6 +88,7 @@ class AiClassifier extends Model
     $client = new Client();
     $appId = env('NUTRITIONIX_APP_ID');
     $apiKey = env('NUTRITIONIX_API_KEY');
+
 
     try {
       $response = $client->request('POST', 'https://trackapi.nutritionix.com/v2/natural/nutrients', [
