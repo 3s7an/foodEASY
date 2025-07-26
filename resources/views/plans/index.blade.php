@@ -4,8 +4,8 @@
 
 @section('content')
 <div class="container mt-4">
-    <div class="d-flex align-items-center justify-content-between">
-        <h1 class="fw-bold text-center">Jedálničky</h1>
+    <div class="d-flex flex-column flex-md-row align-items-center justify-content-between">
+        <h1 class="fw-bold text-center mb-3 mb-md-0">Jedálničky</h1>
         <button type="button" class="btn btn-secondary" @click="openNewPlanModal">
             Nový jedálniček
             <i class="fas fa-plus fa-xs ms-1"></i>
@@ -34,14 +34,13 @@
                             <li><i class="fas fa-clock me-1"></i> Počet dní: {{ $plan->duration ?? 'neuvedené' }}</li>
                         </ul>
  
-                        <div class="mt-auto d-flex justify-content-between align-items-center">
+                        <div class="mt-auto d-flex justify-content-between align-items-center flex-wrap gap-2">
                             <a href="{{ route('plans.view', $plan->id) }}" class="btn btn-sm btn-outline-secondary" title="Zobraziť detail">
                                 <i class="fas fa-eye"></i>
                             </a>
                             <a href="{{ route('plans.edit', $plan->id) }}" class="btn btn-sm btn-outline-warning" title="Upraviť">
                                 <i class="fas fa-edit"></i>
                             </a>
-                         
                         </div>
                     </div>
                 </div>
@@ -49,6 +48,4 @@
         @endforeach
     </div>
 </div>
-
-
 @endsection

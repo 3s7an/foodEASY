@@ -48,14 +48,14 @@
 
     <!-- Automatický režim -->
     <div class="form-section row g-3" v-if="generation_mode === 'auto'">
-      <div class="col-md-5">
+      <!-- <div class="col-md-5"> -->
         <label class="form-label"><i class="bi bi-tags-fill me-2"></i>Generovať z kategórií:</label>
         <select class="form-select" v-model="categoriesAuto" multiple size="6" style="min-height: 180px;">
           <option v-for="category in categories" :key="category.id" :value="category.id">{{ category.name }}</option>
         </select>
         <small class="form-text text-muted">Podrž Ctrl (Cmd) alebo Shift pre výber viacerých kategórií.</small>
-      </div>
-      <div class="col-md-1"></div>
+      <!-- </div> -->
+      <!-- <div class="col-md-1"></div> -->
       <!-- <div class="col-md-6">
         <div class="form-check form-check-inline">
           <input class="form-check-input" type="checkbox" id="show_calories" v-model="show_calories" />
